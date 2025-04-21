@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TinklinisPlius")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d36f8e830d9a37aec21ae273aaf35879ffe86c4d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+82d8c312af7671373e9c296f01396167ca688b15")]
 [assembly: System.Reflection.AssemblyProductAttribute("TinklinisPlius")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TinklinisPlius")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
