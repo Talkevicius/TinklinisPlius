@@ -11,9 +11,9 @@ public partial class Payouttransaction
 
     public DateOnly? Payoutdate { get; set; }
 
-    public int FkUseridUser { get; set; }
-
     public int FkBetidBet { get; set; }
+
+    public int FkUseridUser { get; set; }
 
     public virtual Bet FkBetidBetNavigation { get; set; } = null!;
 

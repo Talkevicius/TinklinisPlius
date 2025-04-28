@@ -9,7 +9,9 @@ public partial class Tournament
 
     public string? Title { get; set; }
 
-    public DateOnly? Date { get; set; }
+    public DateOnly? Startdate { get; set; }
+
+    public DateOnly? Enddate { get; set; }
 
     public string? Country { get; set; }
 

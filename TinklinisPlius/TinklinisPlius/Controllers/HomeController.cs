@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+/*using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using TinklinisPlius.Models;
 
@@ -29,4 +29,4 @@ namespace TinklinisPlius.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
-}
+}*/

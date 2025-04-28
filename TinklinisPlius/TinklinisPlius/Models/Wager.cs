@@ -11,6 +11,8 @@ public partial class Wager
 
     public int? Combinedsum { get; set; }
 
+    public bool? Hasfinished { get; set; }
+
     public int FkMatchidMatch { get; set; }
 
     public virtual ICollection<Bet> Bets { get; set; } = new List<Bet>();

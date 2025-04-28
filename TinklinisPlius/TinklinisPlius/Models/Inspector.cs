@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TinklinisPlius.Models;
 
-public partial class Controller
+public partial class Inspector
 {
     public int IdUser { get; set; }
 

@@ -21,13 +21,13 @@ public partial class Match
 
     public int FkTeamidTeam { get; set; }
 
-    public int? FkControlleridUser { get; set; }
+    public int? FkInspectoridUser { get; set; }
 
     public int? FkMatchidMatch { get; set; }
 
     public int? FkTournamentidTournament { get; set; }
 
-    public virtual Controller? FkControlleridUserNavigation { get; set; }
+    public virtual Inspector? FkInspectoridUserNavigation { get; set; }
 
     public virtual Match? FkMatchidMatchNavigation { get; set; }
 

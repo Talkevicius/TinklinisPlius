@@ -21,9 +21,17 @@ public partial class User
 
     public int? Cardcvc { get; set; }
 
+    public double? Riskfactor { get; set; }
+
+    public double? Lossrate { get; set; }
+
+    public double? Betvariance { get; set; }
+
+    public double? Highoddsfrequency { get; set; }
+
     public virtual ICollection<Bet> Bets { get; set; } = new List<Bet>();
 
-    public virtual Controller? Controller { get; set; }
+    public virtual Inspector? Inspector { get; set; }
 
     public virtual ICollection<Payouttransaction> Payouttransactions { get; set; } = new List<Payouttransaction>();
 

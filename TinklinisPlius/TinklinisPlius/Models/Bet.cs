@@ -19,9 +19,9 @@ public partial class Bet
 
     public bool? Result { get; set; }
 
-    public int FkUseridUser { get; set; }
-
     public int FkWageridWager { get; set; }
+
+    public int FkUseridUser { get; set; }
 
     public virtual User FkUseridUserNavigation { get; set; } = null!;
 

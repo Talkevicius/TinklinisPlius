@@ -17,7 +17,7 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Bet> Bets { get; set; }
 
-    public virtual DbSet<Controller> Controllers { get; set; }
+    public virtual DbSet<Inspector> Inspectors { get; set; }
 
     public virtual DbSet<Match> Matches { get; set; }
 
@@ -38,8 +38,6 @@ public partial class AppDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseNpgsql("Host=localhost;Database=IrankiaiDB;Username=postgres;Password=ktuktu123");
-
-        // Pasikeisti pagal savo postgre sql duomenis kai jungiesi su db
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -70,11 +68,11 @@ public partial class AppDbContext : DbContext
                 .HasConstraintName("fk_bet_wager");
         });
 
-        modelBuilder.Entity<Controller>(entity =>
+        modelBuilder.Entity<Inspector>(entity =>
         {
-            entity.HasKey(e => e.IdUser).HasName("controller_pkey");
+            entity.HasKey(e => e.IdUser).HasName("inspector_pkey");
 
-            entity.ToTable("controller");
+            entity.ToTable("inspector");
 
             entity.Property(e => e.IdUser)
                 .ValueGeneratedNever()
@@ -86,10 +84,10 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("surname");
 
-            entity.HasOne(d => d.IdUserNavigation).WithOne(p => p.Controller)
-                .HasForeignKey<Controller>(d => d.IdUser)
+            entity.HasOne(d => d.IdUserNavigation).WithOne(p => p.Inspector)
+                .HasForeignKey<Inspector>(d => d.IdUser)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("controller_id_user_fkey");
+                .HasConstraintName("fk_inspector_user");
         });
 
         modelBuilder.Entity<Match>(entity =>
@@ -98,11 +96,9 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("match");
 
-            entity.HasIndex(e => e.FkTeamidTeam, "match_fk_teamid_team_key").IsUnique();
-
             entity.Property(e => e.IdMatch).HasColumnName("id_match");
             entity.Property(e => e.Date).HasColumnName("date");
-            entity.Property(e => e.FkControlleridUser).HasColumnName("fk_controllerid_user");
+            entity.Property(e => e.FkInspectoridUser).HasColumnName("fk_inspectorid_user");
             entity.Property(e => e.FkMatchidMatch).HasColumnName("fk_matchid_match");
             entity.Property(e => e.FkTeamidTeam).HasColumnName("fk_teamid_team");
             entity.Property(e => e.FkTournamentidTournament).HasColumnName("fk_tournamentid_tournament");
@@ -114,18 +110,18 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("title");
 
-            entity.HasOne(d => d.FkControlleridUserNavigation).WithMany(p => p.Matches)
-                .HasForeignKey(d => d.FkControlleridUser)
-                .HasConstraintName("fk_controller");
+            entity.HasOne(d => d.FkInspectoridUserNavigation).WithMany(p => p.Matches)
+                .HasForeignKey(d => d.FkInspectoridUser)
+                .HasConstraintName("fk_match_inspector");
 
             entity.HasOne(d => d.FkMatchidMatchNavigation).WithMany(p => p.InverseFkMatchidMatchNavigation)
                 .HasForeignKey(d => d.FkMatchidMatch)
-                .HasConstraintName("fk_prev_match");
+                .HasConstraintName("fk_match_previous_match");
 
-            entity.HasOne(d => d.FkTeamidTeamNavigation).WithOne(p => p.Match)
-                .HasForeignKey<Match>(d => d.FkTeamidTeam)
+            entity.HasOne(d => d.FkTeamidTeamNavigation).WithMany(p => p.Matches)
+                .HasForeignKey(d => d.FkTeamidTeam)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("match_fk_teamid_team_fkey");
+                .HasConstraintName("fk_match_team");
 
             entity.HasOne(d => d.FkTournamentidTournamentNavigation).WithMany(p => p.Matches)
                 .HasForeignKey(d => d.FkTournamentidTournament)
@@ -168,12 +164,12 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.FkBetidBetNavigation).WithOne(p => p.Payouttransaction)
                 .HasForeignKey<Payouttransaction>(d => d.FkBetidBet)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_payout_bet");
+                .HasConstraintName("fk_payouttransaction_bet");
 
             entity.HasOne(d => d.FkUseridUserNavigation).WithMany(p => p.Payouttransactions)
                 .HasForeignKey(d => d.FkUseridUser)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_payout_user");
+                .HasConstraintName("fk_payouttransaction_user");
         });
 
         modelBuilder.Entity<Player>(entity =>
@@ -231,7 +227,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.FkTeammanageridUserNavigation).WithOne(p => p.Team)
                 .HasForeignKey<Team>(d => d.FkTeammanageridUser)
-                .HasConstraintName("fk_teammanager");
+                .HasConstraintName("fk_team_manager");
 
             entity.HasOne(d => d.FkTournamentidTournamentNavigation).WithMany(p => p.Teams)
                 .HasForeignKey(d => d.FkTournamentidTournament)
@@ -257,7 +253,7 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.IdUserNavigation).WithOne(p => p.Teammanager)
                 .HasForeignKey<Teammanager>(d => d.IdUser)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("teammanager_id_user_fkey");
+                .HasConstraintName("fk_teammanager_user");
         });
 
         modelBuilder.Entity<Tournament>(entity =>
@@ -271,8 +267,9 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("country");
             entity.Property(e => e.Creationtype).HasColumnName("creationtype");
-            entity.Property(e => e.Date).HasColumnName("date");
+            entity.Property(e => e.Enddate).HasColumnName("enddate");
             entity.Property(e => e.Isactive).HasColumnName("isactive");
+            entity.Property(e => e.Startdate).HasColumnName("startdate");
             entity.Property(e => e.Teamnr).HasColumnName("teamnr");
             entity.Property(e => e.Title)
                 .HasMaxLength(255)
@@ -286,20 +283,24 @@ public partial class AppDbContext : DbContext
             entity.ToTable("User");
 
             entity.Property(e => e.IdUser).HasColumnName("id_user");
+            entity.Property(e => e.Betvariance).HasColumnName("betvariance");
             entity.Property(e => e.Cardcvc).HasColumnName("cardcvc");
             entity.Property(e => e.Cardexpirationdate).HasColumnName("cardexpirationdate");
             entity.Property(e => e.Cardnumber)
                 .HasMaxLength(255)
                 .HasColumnName("cardnumber");
+            entity.Property(e => e.Highoddsfrequency).HasColumnName("highoddsfrequency");
             entity.Property(e => e.Login)
                 .HasMaxLength(255)
                 .HasColumnName("login");
+            entity.Property(e => e.Lossrate).HasColumnName("lossrate");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");
+            entity.Property(e => e.Riskfactor).HasColumnName("riskfactor");
             entity.Property(e => e.Surname)
                 .HasMaxLength(255)
                 .HasColumnName("surname");
@@ -317,6 +318,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Chance).HasColumnName("chance");
             entity.Property(e => e.Combinedsum).HasColumnName("combinedsum");
             entity.Property(e => e.FkMatchidMatch).HasColumnName("fk_matchid_match");
+            entity.Property(e => e.Hasfinished).HasColumnName("hasfinished");
 
             entity.HasOne(d => d.FkMatchidMatchNavigation).WithOne(p => p.Wager)
                 .HasForeignKey<Wager>(d => d.FkMatchidMatch)
