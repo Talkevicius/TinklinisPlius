@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Titas\\Desktop\\Univeras\\3 metai\\6 semestras\\TinklinisPlius\\TinklinisPlius\\TinklinisPlius.csproj": {}
+    "C:\\Users\\Vytenis\\Desktop\\Irankiai\\TinklinisPlius\\TinklinisPlius\\TinklinisPlius.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Titas\\Desktop\\Univeras\\3 metai\\6 semestras\\TinklinisPlius\\TinklinisPlius\\TinklinisPlius.csproj": {
+    "C:\\Users\\Vytenis\\Desktop\\Irankiai\\TinklinisPlius\\TinklinisPlius\\TinklinisPlius.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Titas\\Desktop\\Univeras\\3 metai\\6 semestras\\TinklinisPlius\\TinklinisPlius\\TinklinisPlius.csproj",
+        "projectUniqueName": "C:\\Users\\Vytenis\\Desktop\\Irankiai\\TinklinisPlius\\TinklinisPlius\\TinklinisPlius.csproj",
         "projectName": "TinklinisPlius",
-        "projectPath": "C:\\Users\\Titas\\Desktop\\Univeras\\3 metai\\6 semestras\\TinklinisPlius\\TinklinisPlius\\TinklinisPlius.csproj",
-        "packagesPath": "C:\\Users\\Titas\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Titas\\Desktop\\Univeras\\3 metai\\6 semestras\\TinklinisPlius\\TinklinisPlius\\obj\\",
+        "projectPath": "C:\\Users\\Vytenis\\Desktop\\Irankiai\\TinklinisPlius\\TinklinisPlius\\TinklinisPlius.csproj",
+        "packagesPath": "C:\\Users\\Vytenis\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Vytenis\\Desktop\\Irankiai\\TinklinisPlius\\TinklinisPlius\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Programs\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Titas\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Vytenis\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -39,11 +43,22 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "target": "Package",
+              "version": "[9.0.5, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -63,7 +78,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
