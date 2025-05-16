@@ -1,0 +1,60 @@
+@model List<TinklinisPlius.Models.Tournament>
+<header>
+    <style>
+        table tbody tr:hover {
+            background-color: #f2f2f2; /* Light grey background when hovered */
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+    </style>
+</header>
+@{
+    ViewBag.Title = "Tournament List";
+}
+
+<h2>View Tournament List</h2>
+
+<p>
+    <a href="@Url.Action("", "Tournament")" class="btn btn-success">
+        + Create New Tournament
+    </a>
+</p>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        No tournaments.
+    </div>
+}
+else
+{
+    <table class="table table-bordered ">
+        <thead class="thead-dark">
+        <tr>
+            <th>Title</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Country</th>
+            <th>Team Number</th>
+            <th>Active?</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var t in Model)
+        {
+            <tr style="cursor: pointer;" onclick="window.location='@Url.Action("TournamentInfoWindow", "Tournament", new { id = t.IdTournament })'">
+                <td>@t.Title</td>
+                <td>@(t.Startdate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                <td>@(t.Enddate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                <td>@t.Country</td>
+                <td>@t.Teamnr</td>
+                <td>@(t.Isactive == true ? "Yes" : "No")</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" onclick="event.stopPropagation(); alert('Edit function is not implemented.')">Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); alert('Delete function is not implemented.')">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

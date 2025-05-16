@@ -1,0 +1,149 @@
+@model TinklinisPlius.Models.Tournament
+
+<header>
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.tournament-container {}
+
+.tournament-headers {
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 1px solid #ccc;
+}
+
+.tournament-headers h3 {
+    flex: 1;
+    text-align: center;
+    font-weight: 400;
+    border-right: 1px dashed #ccc;
+    margin: 0;
+    padding: 1rem;
+}
+
+.tournament-brackets {
+    display: flex;
+    background: #fdfdfd;
+    margin-bottom: 50px;
+}
+
+.bracket {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    border-right: 1px dashed #ccc;
+    padding: 30px 0;
+}
+
+.team-item {
+    background-color: #f4f4f4;
+    padding: .5rem;
+    margin: .5rem 10px;
+    text-align: center;
+    line-height: 2;
+    position: relative;
+}
+
+.team-item time {
+    display: inline-block;
+    background-color: #dbdbdb;
+    font-size: .8rem;
+    padding: 0 .6rem;
+}
+
+/* Winner bracket - remove connectors */
+.bracket:last-of-type .team-item::before,
+.bracket:last-of-type .team-item::after {
+    display: none;
+}
+
+</style>
+</header>
+
+@{
+    ViewBag.Title = "Tournament Bracket";
+
+    var matches = Model.Matches.OrderBy(m => m.Placeintournament).ToList();
+    int totalMatches = matches.Count;
+    <script type="text/javascript">
+        var totalMatches = @Model.Matches.Count();  // This will get the number of matches from the Model
+        console.log(totalMatches);
+    </script>
+    // Define different rounds based on the number of teams
+    List<List<TinklinisPlius.Models.Match>> rounds = new List<List<TinklinisPlius.Models.Match>>();
+
+    // Adjust rounds based on number of teams
+    if (totalMatches == 15) 
+    {
+        rounds.Add(matches.Take(8).ToList());  // Round of 16
+        rounds.Add(matches.Skip(8).Take(4).ToList());  // Quarter-Finals
+        rounds.Add(matches.Skip(12).Take(2).ToList());  // Semi-Finals
+        rounds.Add(matches.Skip(14).Take(1).ToList());  // Final
+    }
+    else if (totalMatches == 7)
+    {
+        rounds.Add(matches.Take(4).ToList());  // Quarter-Finals
+        rounds.Add(matches.Skip(4).Take(2).ToList());  // Semi-Finals
+        rounds.Add(matches.Skip(6).Take(1).ToList());  // Finals
+    }
+    else if (totalMatches == 3)
+    {
+        rounds.Add(matches.Take(2).ToList());  // Semi-Finals
+        rounds.Add(new List<TinklinisPlius.Models.Match> { matches.Last() }); // Final
+    }
+}
+
+
+<div class="tournament-info">
+    <h2>@Model.Title</h2>
+    <p><strong>Start Date:</strong> @(Model.Startdate.HasValue ? Model.Startdate.Value.ToString("MMMM dd, yyyy") : "N/A")</p>
+    <p><strong>End Date:</strong> @(Model.Enddate.HasValue ? Model.Enddate.Value.ToString("MMMM dd, yyyy") : "N/A")</p>
+    <p><strong>Location:</strong> @Model.Country</p>
+    <p><strong>Team Nr:</strong> @Model.Teamnr</p>
+    <p><strong>Created: </strong>@(Model.Creationtype.HasValue ? (Model.Creationtype.Value ? "Random" : "Coefficient") : "N/A")</p>
+    <p><strong>Tournament: </strong>@(Model.Isactive.HasValue ? (Model.Isactive.Value ? "Ended" : "Ongoing") : "N/A")</p>
+
+</div>
+
+<div class="tournament-container">
+    <div class="tournament-headers">
+        @if (totalMatches == 15)
+        {
+            <h3>Round of 16</h3>
+            <h3>Quarter-Finals</h3>
+            <h3>Semi-Finals</h3>
+            <h3>Final</h3>
+        }
+        else if (totalMatches == 7)
+        {
+            <h3>Quarter-Finals</h3>
+            <h3>Semi-Finals</h3>
+            <h3>Finals</h3>
+        }
+        else if (totalMatches == 3)
+        {
+            <h3>Semi-Finals</h3>
+            <h3>Final</h3>
+        }
+    </div>
+
+    <div class="tournament-brackets">
+        @for (int i = 0; i < rounds.Count; i++)
+        {
+            <ul class="bracket bracket-@i">
+                @foreach (var match in rounds[i])
+                {
+                    <li class="team-item">
+                        @match.Title
+                        <time>@(match.Hashappened ?? false ? $"{match.Team1score} - {match.Team2score}" : "Ongoing")</time>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
