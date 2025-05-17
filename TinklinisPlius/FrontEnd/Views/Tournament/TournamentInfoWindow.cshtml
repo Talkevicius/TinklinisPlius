@@ -138,10 +138,12 @@ html, body {
             <ul class="bracket bracket-@i">
                 @foreach (var match in rounds[i])
                 {
+                <a asp-controller="Match" asp-action="MatchInfoWindow" asp-route-id="@match.IdMatch">
                     <li class="team-item">
                         @match.Title
                         <time>@(match.Hashappened ?? false ? $"{match.Team1score} - {match.Team2score}" : "Ongoing")</time>
                     </li>
+                </a>
                 }
             </ul>
         }

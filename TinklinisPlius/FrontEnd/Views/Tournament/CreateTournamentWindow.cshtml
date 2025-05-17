@@ -1,0 +1,92 @@
+@model TinklinisPlius.Models.Tournament
+
+@{
+    ViewBag.Title = "Create Tournament";
+    var availableTeams = ViewBag.AvailableTeams as List<TinklinisPlius.Models.Team>;
+}
+
+<h2>Create Tournament</h2>
+
+<form asp-action="CreateTournamentWindow" method="post">
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Country"></label>
+        <input asp-for="Country" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Startdate"></label>
+        <input asp-for="Startdate" type="date" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Enddate"></label>
+        <input asp-for="Enddate" type="date" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Creationtype"></label>
+        <select asp-for="Creationtype" class="form-control">
+            <option value="false">Random</option>
+            <option value="true">Using coefficient</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Teamnr">Number of Teams</label>
+        <select asp-for="Teamnr" class="form-control" id="teamLimitSelect">
+            <option value="4">4 Teams</option>
+            <option value="8">8 Teams</option>
+            <option value="16">16 Teams</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Select Participating Teams</label>
+        <div id="teamsCheckboxes" style="height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+            @foreach (var team in availableTeams)
+            {
+                <div class="form-check">
+                    <input class="form-check-input team-checkbox"
+                           type="checkbox"
+                           name="SelectedTeamIds"
+                           value="@team.IdTeam"
+                           id="team_@team.IdTeam" />
+                    <label class="form-check-label" for="team_@team.IdTeam">@team.Name</label>
+                </div>
+            }
+        </div>
+        <small class="form-text text-muted">Select up to the number of teams specified.</small>
+    </div>
+
+
+    <br>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section Scripts {
+    <script>
+        function updateCheckboxLimit() {
+            const teamLimit = parseInt(document.getElementById("teamLimitSelect").value);
+            const checkboxes = document.querySelectorAll(".team-checkbox");
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+
+            checkboxes.forEach(cb => {
+                cb.disabled = !cb.checked && checkedCount >= teamLimit;
+            });
+        }
+
+        // Hook up events
+        document.getElementById("teamLimitSelect").addEventListener("change", updateCheckboxLimit);
+        document.querySelectorAll(".team-checkbox").forEach(cb => {
+            cb.addEventListener("change", updateCheckboxLimit);
+        });
+
+        // Initial enforcement on page load
+        window.onload = updateCheckboxLimit;
+    </script>
+}
