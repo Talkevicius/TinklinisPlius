@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TinklinisPlius")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abf4b078ccf04d00cb1b5ff465e2d8110b0f6dc8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9b3f0869c939b8250e22feb80b2386c0932ec0ab")]
 [assembly: System.Reflection.AssemblyProductAttribute("TinklinisPlius")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TinklinisPlius")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

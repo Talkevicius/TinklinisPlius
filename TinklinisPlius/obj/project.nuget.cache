@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "VWBaaK1TZP2tm9SHaMH9GuX+49cTPr5db+4CUj2fLgZEjVwbcybc2FJEzUSTPwzDxgsa1rwpJ+QBOpnbEvJl2Q==",
+  "dgSpecHash": "zM2haDJ8qW7NYxuxnTxxh+ocCbPwTVhEDi6zE2ZzJqUXlllv6kiIhoqvTMCBMtuX3fxGVYdFBvoXwt+NUa3v3A==",
   "success": true,
   "projectFilePath": "C:\\Users\\Titas\\Desktop\\Univeras\\3 metai\\6 semestras\\analizės_įrankiai\\TinklinisPlius\\TinklinisPlius\\TinklinisPlius.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Titas\\.nuget\\packages\\erroror\\2.0.1\\erroror.2.0.1.nupkg.sha512",
     "C:\\Users\\Titas\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Titas\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\7.0.0\\microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",
     "C:\\Users\\Titas\\.nuget\\packages\\microsoft.build.framework\\17.8.3\\microsoft.build.framework.17.8.3.nupkg.sha512",

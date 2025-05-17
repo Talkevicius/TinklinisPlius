@@ -1,8 +1,14 @@
+using TinklinisPlius.Models;
+using TinklinisPlius.Services.Tournament;
+using TinklinisPlius.Services.Match;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddScoped<ITournamentService, TournamentService>();
+builder.Services.AddScoped<IMatchService, MatchService>();
+builder.Services.AddDbContext<AppDbContext>();
 // Tell Razor where to find views in custom folder
 builder.Services.Configure<Microsoft.AspNetCore.Mvc.Razor.RazorViewEngineOptions>(options =>
 {

@@ -301,3 +301,4 @@ C:\Users\Titas\Desktop\Univeras\3 metai\6 semestras\analizės_įrankiai\Tinklini
 C:\Users\Titas\Desktop\Univeras\3 metai\6 semestras\analizės_įrankiai\TinklinisPlius\TinklinisPlius\obj\Debug\net8.0\TinklinisPlius.pdb
 C:\Users\Titas\Desktop\Univeras\3 metai\6 semestras\analizės_įrankiai\TinklinisPlius\TinklinisPlius\obj\Debug\net8.0\TinklinisPlius.genruntimeconfig.cache
 C:\Users\Titas\Desktop\Univeras\3 metai\6 semestras\analizės_įrankiai\TinklinisPlius\TinklinisPlius\obj\Debug\net8.0\ref\TinklinisPlius.dll
+C:\Users\Titas\Desktop\Univeras\3 metai\6 semestras\analizės_įrankiai\TinklinisPlius\TinklinisPlius\bin\Debug\net8.0\ErrorOr.dll

@@ -3,11 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using TinklinisPlius.Models;
+using TinklinisPlius.Services.Tournament;
 
 namespace TinklinisPlius.Controllers
 {
     public class TournamentController : Controller
     {
+        private readonly ITournamentService _tournamentService;
+        private readonly AppDbContext _context; // Assuming the use of a DbContext for database operations.
+
+        public TournamentController(ITournamentService tournamentService, AppDbContext context)
+        {
+            _tournamentService = tournamentService;
+            _context = context;
+        }
+        
         // Mock data for tournaments
         private List<Tournament> GetMockTournaments()
 {
@@ -223,8 +233,17 @@ namespace TinklinisPlius.Controllers
         // Action to show the tournament list
         public ActionResult TournamentListWindow()
         {
-            var tournaments = GetMockTournaments(); // Replace with DB call later
-            return View(tournaments);
+            
+            var result = _tournamentService.GetAllTournaments();
+            //var tournaments = GetMockTournaments(); // Replace with DB call later
+            if (result.IsError)
+            {
+                // Handle error (e.g., show an error page or message)
+                return View("Error");
+            }
+
+            // Pass the filtered products to the Index view
+            return View("~/FrontEnd/Views/TournamentListWindow.cshtml", result.Value);
         }
 
         // Action to show details of a selected tournament

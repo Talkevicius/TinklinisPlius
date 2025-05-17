@@ -1,0 +1,10 @@
+using ErrorOr;
+using TinklinisPlius.Models;
+namespace TinklinisPlius.Services.Tournament
+{
+    public interface ITournamentService
+    {
+        ErrorOr<Created> CreateTournament(Models.Tournament tournament);
+        ErrorOr<List<Models.Tournament>> GetAllTournaments(); // Melynas Lukas added
+    }
+}

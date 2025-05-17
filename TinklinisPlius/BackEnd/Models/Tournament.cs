@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TinklinisPlius.Models;
 
-public partial class Tournament
+public class Tournament
 {
     public int IdTournament { get; set; }
 
