@@ -11,3 +11,31 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+# .NET build artifacts
+**/bin/
+**/obj/
+
+# VS + Rider specific folders (optional but common)
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider project info files
+*.nuget.info
+*.restore.info
+
+# Build results
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+
+# Other common ignore rules
+*.db
+*.DS_Store
+*.swp
