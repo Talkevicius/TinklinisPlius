@@ -21,7 +21,7 @@ public partial class Match
 
     public int FkTeamidTeam { get; set; }
 
-    public int FkTournamentidTournament { get; set; }
+    public int FkTournamentidTournament { get; set; } //kuriam turnyrui priklauso
 
     public int? FkMatchidMatch { get; set; }
 

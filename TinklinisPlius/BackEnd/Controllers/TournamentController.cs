@@ -4,17 +4,20 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using TinklinisPlius.Models;
 using TinklinisPlius.Services.Tournament;
+using TinklinisPlius.Services.Match;
 
 namespace TinklinisPlius.Controllers
 {
     public class TournamentController : Controller
     {
         private readonly ITournamentService _tournamentService;
+        private readonly IMatchService _matchService;
         private readonly AppDbContext _context; // Assuming the use of a DbContext for database operations.
 
-        public TournamentController(ITournamentService tournamentService, AppDbContext context)
+        public TournamentController(ITournamentService tournamentService, IMatchService matchService, AppDbContext context)
         {
             _tournamentService = tournamentService;
+            _matchService = matchService;
             _context = context;
         }
         
@@ -235,7 +238,7 @@ namespace TinklinisPlius.Controllers
         {
             
             var result = _tournamentService.GetAllTournaments();
-            //var tournaments = GetMockTournaments(); // Replace with DB call later
+            var tournaments = GetMockTournaments(); // Replace with DB call later
             if (result.IsError)
             {
                 // Handle error (e.g., show an error page or message)
@@ -243,18 +246,30 @@ namespace TinklinisPlius.Controllers
             }
 
             // Pass the filtered products to the Index view
-            return View("~/FrontEnd/Views/TournamentListWindow.cshtml", result.Value);
+            //return View("TournamentListWindow.cshtml", result.Value);
+            return View(tournaments);
+
         }
 
         // Action to show details of a selected tournament
         public ActionResult TournamentInfoWindow(int id)
         {
-            var tournaments = GetMockTournaments(); // Mock data
-            var tournament = tournaments.FirstOrDefault(t => t.IdTournament == id); // Find tournament by ID
+            //var tournament = _tournamentService.GetTournamentById(id);
+            var tournament = GetMockTournaments().First();
+
+            if (tournament == null)
+            {
+                return View("Error");
+            }
+
+            // Fetch related matches for the tournament (if needed)
+            tournament.Matches = _matchService.GetMatchesByTournamentId(id); // Or whatever method you have for this
             
-            // Pass the tournament data along with its matches
-            return View(tournament); // View with tournament and matches
+
+            return View(tournament);
         }
+
+
         
         private List<Team> GetAvailableTeams()
         {
@@ -263,11 +278,13 @@ namespace TinklinisPlius.Controllers
             var tournaments = GetMockTournaments();
 
             var activeTeamIds = tournaments
-                .Where(t => t.Isactive == true)
+                .Where(t => t.Teams != null)
                 .SelectMany(t => t.Teams.Select(team => team.IdTeam))
                 .ToHashSet();
 
-            return allTeams.Where(t => !activeTeamIds.Contains(t.IdTeam)).ToList();
+
+            //return allTeams.Where(t => !activeTeamIds.Contains(t.IdTeam)).ToList();
+            return allTeams;
         }
 
         private List<Team> GetMockTeams()

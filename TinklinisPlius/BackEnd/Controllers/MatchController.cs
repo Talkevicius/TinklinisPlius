@@ -10,7 +10,6 @@ namespace TinklinisPlius.Controllers
     {
         public ActionResult MatchInfoWindow()
         {
-            
             return View();
         }
     }

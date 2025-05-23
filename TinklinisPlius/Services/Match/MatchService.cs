@@ -14,5 +14,14 @@ namespace TinklinisPlius.Services.Match
             _context = context;
         }
         
+        public ICollection<Models.Match> GetMatchesByTournamentId(int tournamentId)
+        {
+            return _context.Matches
+                .Where(m => m.FkTournamentidTournament == tournamentId)
+                .ToList();
+        }
+
+
+        
     }
 }

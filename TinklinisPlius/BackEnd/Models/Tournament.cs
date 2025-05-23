@@ -21,7 +21,7 @@ public class Tournament
 
     public bool? Isactive { get; set; }
 
-    public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
+    public virtual ICollection<Match> Matches { get; set; } 
 
-    public virtual ICollection<Team> Teams { get; set; } = new List<Team>();
+    public virtual ICollection<Team> Teams { get; set; }
 }

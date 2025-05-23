@@ -40,6 +40,13 @@ namespace TinklinisPlius.Services.Tournament
     
             return ret; // Implicitly wrapped as successful ErrorOr<T>
         }
+        
+        // Assuming this is in your TournamentService class
+        public Models.Tournament GetTournamentById(int id)
+        {
+            return _context.Tournaments.FirstOrDefault(t => t.IdTournament == id);
+        }
+
 
 
         
