@@ -1,31 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TinklinisPlius.Models;
+using TinklinisPlius.Services.Player;
 
 namespace TinklinisPlius.Controllers
 {
     public class PlayerController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IPlayerService _playerService;
 
-        public PlayerController(AppDbContext context)
+        public PlayerController(IPlayerService playerService)
         {
-            _context = context;
+            _playerService = playerService;
         }
 
         [HttpGet]
-        public IActionResult PlayerDetails(int id)
+        public IActionResult PlayerElo()
         {
-            var player = _context.Players
-                .Include(p => p.FkTeamidTeamNavigation) // jeigu nori rodyti komandos duomenis
-                .FirstOrDefault(p => p.IdPlayer == id);
-
-            if (player == null)
+            var result = _playerService.GetAllPlayers();
+            if (result.IsError)
             {
-                return NotFound();
+                return View("Error");
             }
 
-            return View(player);
+            return View(result.Value);
         }
     }
 }
