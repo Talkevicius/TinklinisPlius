@@ -3,14 +3,17 @@ using TinklinisPlius.Services.Match;
 using TinklinisPlius.Services.Player;
 using TinklinisPlius.Services.Team;
 using TinklinisPlius.Services.Tournament;
+using TinklinisPlius.Services.Participate;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 // DB SERVICES FOR TOURNAMENT/MATCH
+// DB SERVICES FOR TOURNAMENT/MATCH
 builder.Services.AddScoped<ITournamentService, TournamentService>();
 builder.Services.AddScoped<IMatchService, MatchService>();
+builder.Services.AddScoped<IParticipateService, ParticipateService>();
 // DB SERVICES FOR TEAM
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();

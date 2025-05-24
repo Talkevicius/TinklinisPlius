@@ -39,7 +39,7 @@ public partial class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Database=IrankiaiDB;Username=postgres;Password=ktuktu123");
+        => optionsBuilder.UseNpgsql("Host=localhost;Database=IrankiaiDB;Username=postgres;Password=ktu123");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -108,7 +108,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.FkInspectoridUser).HasColumnName("fk_inspectorid_user");
             entity.Property(e => e.FkMatchfkTournamentidTournament).HasColumnName("fk_matchfk_tournamentid_tournament");
             entity.Property(e => e.FkMatchidMatch).HasColumnName("fk_matchid_match");
-            entity.Property(e => e.FkTeamidTeam).HasColumnName("fk_teamid_team");
+            entity.Property(e => e.FkTeamidTeam).HasColumnName("fk_teamid_team").isRequired(false);
             entity.Property(e => e.Hashappened).HasColumnName("hashappened");
             entity.Property(e => e.Placeintournament).HasColumnName("placeintournament");
             entity.Property(e => e.Team1score).HasColumnName("team1score");

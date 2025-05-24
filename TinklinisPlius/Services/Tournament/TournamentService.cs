@@ -13,7 +13,7 @@ namespace TinklinisPlius.Services.Tournament
         {
             _context = context;
         }
-        public ErrorOr<Created> CreateTournament(Models.Tournament tournament)
+        public ErrorOr<int> CreateTournament(Models.Tournament tournament)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace TinklinisPlius.Services.Tournament
 
                 _context.Tournaments.Add(tournament);
                 _context.SaveChanges();
-                return Result.Created;
+                return tournament.IdTournament;
             }
             catch
             {

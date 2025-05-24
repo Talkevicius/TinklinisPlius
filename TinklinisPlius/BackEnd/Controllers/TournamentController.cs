@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using TinklinisPlius.Models;
 using TinklinisPlius.Services.Tournament;
 using TinklinisPlius.Services.Match;
+using TinklinisPlius.Services.Participate;
 using TinklinisPlius.Services.Team;
 
 namespace TinklinisPlius.Controllers
@@ -14,227 +15,17 @@ namespace TinklinisPlius.Controllers
         private readonly ITournamentService _tournamentService;
         private readonly IMatchService _matchService;
         private readonly ITeamService _teamService;
+        private readonly IParticipateService _participateService;
         private readonly AppDbContext _context; // Assuming the use of a DbContext for database operations.
 
-        public TournamentController(ITournamentService tournamentService, IMatchService matchService,ITeamService teamService, AppDbContext context)
+        public TournamentController(ITournamentService tournamentService, IMatchService matchService,ITeamService teamService,IParticipateService participateService, AppDbContext context)
         {
             _tournamentService = tournamentService;
             _matchService = matchService;
             _teamService = teamService;
+            _participateService = participateService;
             _context = context;
         }
-        
-        // Mock data for tournaments
-        private List<Tournament> GetMockTournaments()
-{
-    return new List<Tournament>
-    {
-        new Tournament
-        {
-            IdTournament = 1,
-            Title = "Spring Cup",
-            Startdate = DateOnly.FromDateTime(DateTime.Today),
-            Enddate = DateOnly.FromDateTime(DateTime.Today.AddDays(3)),
-            Country = "Lithuania",
-            Teamnr = 4,
-            Creationtype = true,
-            Isactive = true,
-            Matches = new List<Match>
-            {
-                new Match
-                {
-                    IdMatch = 1,
-                    Title = "Team A vs Team B",
-                    Date = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
-                    Team1score = 3,
-                    Team2score = 2,
-                    Hashappened = true,
-                    Placeintournament = 1
-                },
-                new Match
-                {
-                    IdMatch = 2,
-                    Title = "Team C vs Team D",
-                    Date = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
-                    Team1score = 1,
-                    Team2score = 4,
-                    Hashappened = true,
-                    Placeintournament = 2
-                },
-                new Match
-                {
-                    IdMatch = 3,
-                    Title = "Team A vs Team D",
-                    Date = DateOnly.FromDateTime(DateTime.Today.AddDays(3)),
-                    Team1score = 2,
-                    Team2score = 0,
-                    Hashappened = true,
-                    Placeintournament = 3
-                }
-            }
-        },
-        new Tournament
-        {
-            IdTournament = 2,
-            Title = "Autumn Open",
-            Startdate = DateOnly.FromDateTime(DateTime.Today.AddMonths(1)),
-            Enddate = DateOnly.FromDateTime(DateTime.Today.AddMonths(1).AddDays(3)),
-            Country = "Latvia",
-            Teamnr = 4,
-            Creationtype = false,
-            Isactive = false,
-            Matches = new List<Match>
-            {
-                new Match
-                {
-                    IdMatch = 4,
-                    Title = "Team E vs Team F",
-                    Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(1).AddDays(1)),
-                    Team1score = null,
-                    Team2score = null,
-                    Hashappened = false,
-                    Placeintournament = 1
-                },
-                new Match
-                {
-                    IdMatch = 5,
-                    Title = "Team G vs Team H",
-                    Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(1).AddDays(2)),
-                    Team1score = null,
-                    Team2score = null,
-                    Hashappened = false,
-                    Placeintournament = 2
-                },
-                new Match
-                {
-                    IdMatch = 6,
-                    Title = "Winner SF1 vs Winner SF2",
-                    Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(1).AddDays(3)),
-                    Team1score = null,
-                    Team2score = null,
-                    Hashappened = false,
-                    Placeintournament = 3
-                }
-            }
-        },
-        // Tournament with 8 matches
-        new Tournament
-        {
-            IdTournament = 3,
-            Title = "Winter Challenge",
-            Startdate = DateOnly.FromDateTime(DateTime.Today.AddMonths(2)),
-            Enddate = DateOnly.FromDateTime(DateTime.Today.AddMonths(2).AddDays(5)),
-            Country = "Estonia",
-            Teamnr = 8,
-            Creationtype = true,
-            Isactive = true,
-            Matches = new List<Match>
-            {
-                new Match
-                {
-                    IdMatch = 7,
-                    Title = "Team A vs Team B",
-                    Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(2).AddDays(1)),
-                    Team1score = 3,
-                    Team2score = 2,
-                    Hashappened = true,
-                    Placeintournament = 1
-                },
-                new Match
-                {
-                    IdMatch = 8,
-                    Title = "Team C vs Team D",
-                    Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(2).AddDays(2)),
-                    Team1score = 1,
-                    Team2score = 4,
-                    Hashappened = true,
-                    Placeintournament = 2
-                },
-                new Match
-                {
-                    IdMatch = 9,
-                    Title = "Team E vs Team F",
-                    Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(2).AddDays(3)),
-                    Team1score = 0,
-                    Team2score = 3,
-                    Hashappened = true,
-                    Placeintournament = 3
-                },
-                new Match
-                {
-                    IdMatch = 10,
-                    Title = "Team G vs Team H",
-                    Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(2).AddDays(4)),
-                    Team1score = 2,
-                    Team2score = 1,
-                    Hashappened = true,
-                    Placeintournament = 4
-                },
-                new Match
-                {
-                    IdMatch = 11,
-                    Title = "Winner QF1 vs Winner QF2",
-                    Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(2).AddDays(5)),
-                    Team1score = null,
-                    Team2score = null,
-                    Hashappened = false,
-                    Placeintournament = 5
-                },
-                new Match
-                {
-                    IdMatch = 12,
-                    Title = "Winner QF3 vs Winner QF4",
-                    Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(2).AddDays(6)),
-                    Team1score = null,
-                    Team2score = null,
-                    Hashappened = false,
-                    Placeintournament = 6
-                },
-                new Match()
-                {
-                IdMatch = 13,
-                Title = "Winner QF1 vs Winner QF2",
-                Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(2).AddDays(5)),
-                Team1score = null,
-                Team2score = null,
-                Hashappened = false,
-                Placeintournament = 7
-            },
-            }
-        },
-        // Tournament with 16 matches
-        new Tournament
-        {
-            IdTournament = 4,
-            Title = "Grand Masters",
-            Startdate = DateOnly.FromDateTime(DateTime.Today.AddMonths(3)),
-            Enddate = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(7)),
-            Country = "Germany",
-            Teamnr = 16,
-            Creationtype = false,
-            Isactive = true,
-            Matches = new List<Match>
-            {
-        new Match { IdMatch = 13, Title = "Team A vs Team B", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(1)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 1 },
-        new Match { IdMatch = 14, Title = "Team C vs Team D", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(2)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 2 },
-        new Match { IdMatch = 15, Title = "Team E vs Team F", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(3)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 3 },
-        new Match { IdMatch = 16, Title = "Team G vs Team H", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(4)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 4 },
-        new Match { IdMatch = 17, Title = "Team I vs Team J", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(5)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 5 },
-        new Match { IdMatch = 18, Title = "Team K vs Team L", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(6)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 6 },
-        new Match { IdMatch = 19, Title = "Team M vs Team N", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(7)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 7 },
-        new Match { IdMatch = 20, Title = "Team O vs Team P", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(8)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 8 },
-        new Match { IdMatch = 21, Title = "Winner Match 1 vs Winner Match 2", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(9)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 9 },
-        new Match { IdMatch = 22, Title = "Winner Match 3 vs Winner Match 4", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(10)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 10 },
-        new Match { IdMatch = 23, Title = "Winner Match 5 vs Winner Match 6", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(11)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 11 },
-        new Match { IdMatch = 24, Title = "Winner Match 7 vs Winner Match 8", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(12)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 12 },
-        new Match { IdMatch = 25, Title = "Winner Match 9 vs Winner Match 10", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(13)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 13 },
-        new Match { IdMatch = 26, Title = "Winner Match 11 vs Winner Match 12", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(14)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 14 },
-        new Match { IdMatch = 27, Title = "Final Match: Winner Match 13 vs Winner Match 14", Date = DateOnly.FromDateTime(DateTime.Today.AddMonths(3).AddDays(15)), Team1score = null, Team2score = null, Hashappened = false, Placeintournament = 15 }
-    }
-        }
-    };
-}
-
 
         // Action to show the tournament list
         public ActionResult TournamentListWindow()
@@ -256,8 +47,7 @@ namespace TinklinisPlius.Controllers
         // Action to show details of a selected tournament
         public ActionResult TournamentInfoWindow(int id)
         {
-            //var tournament = _tournamentService.GetTournamentById(id);
-            var tournament = GetMockTournaments().First();
+            var tournament = _tournamentService.GetTournamentById(id);
 
             if (tournament == null)
             {
@@ -266,17 +56,12 @@ namespace TinklinisPlius.Controllers
 
             // Fetch related matches for the tournament (if needed)
             tournament.Matches = _matchService.GetMatchesByTournamentId(id); // Or whatever method you have for this
-            
-
             return View(tournament);
         }
 
 
         
-       
-
         
-
         [HttpGet]
         public ActionResult CreateTournamentWindow()
         {
@@ -315,21 +100,10 @@ namespace TinklinisPlius.Controllers
                 return View(tournament);
             }
             
-            
-            
-
-            var result = _tournamentService.CreateTournament(tournament);
-            if (result.IsError)
-            {
-                ModelState.AddModelError("", "Error saving tournament.");
-                var teams = _teamService.GetAvailableTeams();
-                ViewBag.AvailableTeams = teams.Value;
-                return View(tournament);
-            }
-
-            return RedirectToAction("TournamentListWindow");
+            return CreateTournament(tournament);
         }
 
+        [NonAction]
         public ActionResult CreateTournament(Tournament tournament)
         {
             tournament.Isactive = true;
@@ -355,15 +129,114 @@ namespace TinklinisPlius.Controllers
                 teamsToPlay = SortTeamsByRandom(teamsToPlay);
                 tournament.Teams = teamsToPlay;
             }
+             
 
             // Update the tournament teams order based on sorting
             tournament.Teams = teamsToPlay;
 
+            teamsToPlay = tournament.Teams.ToList();
             // Now call service to save tournament and handle match creation, assignments etc.
             var createdTournament = _tournamentService.CreateTournament(tournament);
+            Console.WriteLine("➡️ tournament created"); 
+            int newTournamentId = createdTournament.Value;
+            int count = 0;
+            int tournamentPlace = 0;
+            while (teamsToPlay.Count >= 2)
+            {
+                Team team1 = teamsToPlay[0];
+                Team team2 = teamsToPlay[1];
 
-            
-            
+                // Create match with these two teams and assign tournament
+                var match = new Match
+                {
+                    Title = $"{team1.Name} vs {team2.Name}",
+                    FkTournamentidTournament = newTournamentId,
+                    Hashappened = false,
+                    Date = _tournamentService.GetTournamentById(newTournamentId).Startdate,
+                    Team1score = null,
+                    Team2score = null,
+                    Placeintournament = tournamentPlace,
+                    
+                };
+
+                
+                    _matchService.CreateMatch(match);
+                    Console.WriteLine("➡️ match created"); 
+                
+
+                var participate1 = new Participate
+                {
+                    FkMatchidMatch = match.IdMatch,
+                    FkMatchfkTournamentidTournament = match.FkTournamentidTournament,
+                    FkTeamidTeam = team1.IdTeam
+                };
+
+                var participate2 = new Participate
+                {
+                    FkMatchidMatch = match.IdMatch,
+                    FkMatchfkTournamentidTournament = match.FkTournamentidTournament,
+                    FkTeamidTeam = team2.IdTeam
+                };
+
+                _participateService.CreateParticipate(participate1);
+                _participateService.CreateParticipate(participate2);
+
+                Console.WriteLine("➡️ participates created"); 
+                // Remove the two teams from the list
+                teamsToPlay.RemoveAt(0);
+                teamsToPlay.RemoveAt(0);
+                count++;
+                tournamentPlace++;
+                Console.WriteLine("➡️ incremented"); 
+            }
+
+            int totalMatches = tournament.Teamnr.Value - 1;
+            List<Match> allMatches = _matchService.GetMatchesByTournamentId(newTournamentId).ToList(); // Previously created matches
+            List<Match> templateMatches = new List<Match>();
+
+// Start creating template matches from index = count (where real matches ended)
+            for (int i = count + 1; i <= totalMatches; i++)
+            {
+                int p = i;
+
+                var match = new Match
+                {
+                    Title = $"Template Match P{p}",
+                    FkTournamentidTournament = newTournamentId,
+                    Hashappened = false,
+                    Date = _tournamentService.GetTournamentById(newTournamentId).Startdate,
+                    Team1score = null,
+                    Team2score = null,
+                    Placeintournament = p
+                };
+
+                _matchService.CreateMatch(match); // Sets match.IdMatch
+                templateMatches.Add(match);
+            }
+
+            // Now link each template match to its previous matches using formulas
+            for (int i = 0; i < templateMatches.Count; i++)
+            {
+                int p = i + count + 1;
+                var match = templateMatches[i];
+
+                int leftIndex = 2 * p - (totalMatches + 1);
+                int rightIndex = 2 * p - totalMatches;
+
+                if (leftIndex >= 1 && leftIndex <= allMatches.Count)
+                {
+                    match.FkMatchidMatch = allMatches[leftIndex - 1].IdMatch;
+                }
+
+                if (rightIndex >= 1 && rightIndex <= allMatches.Count)
+                {
+                    match.FkMatchfkTournamentidTournament = allMatches[rightIndex - 1].FkTournamentidTournament;
+                }
+
+                _matchService.UpdateMatch(match); // Make sure you have this method
+            }
+
+
             return View("TournamentInfoWindow", tournament);
         }
 
