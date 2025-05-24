@@ -13,8 +13,10 @@
 /dataSources.local.xml
 
 # .NET build artifacts
+TinklinisPlius/bin/
+TinklinisPlius/obj/
 **/bin/
-**/obj/
+**/obj/ 
 
 # VS + Rider specific folders (optional but common)
 .vs/

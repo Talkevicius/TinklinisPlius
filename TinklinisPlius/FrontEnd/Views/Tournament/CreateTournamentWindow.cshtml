@@ -8,24 +8,25 @@
 <h2>Create Tournament</h2>
 
 <form asp-action="CreateTournamentWindow" method="post">
+     <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group">
         <label asp-for="Title"></label>
-        <input asp-for="Title" class="form-control" />
+        <input asp-for="Title" class="form-control"/>
     </div>
 
     <div class="form-group">
         <label asp-for="Country"></label>
-        <input asp-for="Country" class="form-control" />
+        <input asp-for="Country" class="form-control"/>
     </div>
 
     <div class="form-group">
         <label asp-for="Startdate"></label>
-        <input asp-for="Startdate" type="date" class="form-control" />
+        <input asp-for="Startdate" type="date" class="form-control"/>
     </div>
 
     <div class="form-group">
         <label asp-for="Enddate"></label>
-        <input asp-for="Enddate" type="date" class="form-control" />
+        <input asp-for="Enddate" type="date" class="form-control"/>
     </div>
 
     <div class="form-group">
@@ -48,20 +49,30 @@
     <div class="form-group">
         <label>Select Participating Teams</label>
         <div id="teamsCheckboxes" style="height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
-            @foreach (var team in availableTeams)
+
+            @if (availableTeams != null && availableTeams.Any())
             {
-                <div class="form-check">
-                    <input class="form-check-input team-checkbox"
-                           type="checkbox"
-                           name="SelectedTeamIds"
-                           value="@team.IdTeam"
-                           id="team_@team.IdTeam" />
-                    <label class="form-check-label" for="team_@team.IdTeam">@team.Name</label>
-                </div>
+                foreach (var team in availableTeams)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input team-checkbox"
+                               type="checkbox"
+                               name="SelectedTeamIds"
+                               value="@team.IdTeam"
+                               id="team_@team.IdTeam"/>
+                        <label class="form-check-label" for="team_@team.IdTeam">@team.Name</label>
+                    </div>
+                }
             }
+            else
+            {
+                <p class="text-muted">No available teams to select.</p>
+            }
+
         </div>
         <small class="form-text text-muted">Select up to the number of teams specified.</small>
     </div>
+
 
 
     <br>

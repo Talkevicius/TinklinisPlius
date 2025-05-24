@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using TinklinisPlius.Models;
 using TinklinisPlius.Services.Tournament;
 using TinklinisPlius.Services.Match;
+using TinklinisPlius.Services.Team;
 
 namespace TinklinisPlius.Controllers
 {
@@ -12,12 +13,14 @@ namespace TinklinisPlius.Controllers
     {
         private readonly ITournamentService _tournamentService;
         private readonly IMatchService _matchService;
+        private readonly ITeamService _teamService;
         private readonly AppDbContext _context; // Assuming the use of a DbContext for database operations.
 
-        public TournamentController(ITournamentService tournamentService, IMatchService matchService, AppDbContext context)
+        public TournamentController(ITournamentService tournamentService, IMatchService matchService,ITeamService teamService, AppDbContext context)
         {
             _tournamentService = tournamentService;
             _matchService = matchService;
+            _teamService = teamService;
             _context = context;
         }
         
@@ -237,9 +240,8 @@ namespace TinklinisPlius.Controllers
         public ActionResult TournamentListWindow()
         {
             
-            var result = _tournamentService.GetAllTournaments();
-            var tournaments = GetMockTournaments(); // Replace with DB call later
-            if (result.IsError)
+            var tournaments = _tournamentService.GetAllTournaments();
+            if (tournaments.IsError)
             {
                 // Handle error (e.g., show an error page or message)
                 return View("Error");
@@ -247,7 +249,7 @@ namespace TinklinisPlius.Controllers
 
             // Pass the filtered products to the Index view
             //return View("TournamentListWindow.cshtml", result.Value);
-            return View(tournaments);
+            return View(tournaments.Value);
 
         }
 
@@ -271,111 +273,71 @@ namespace TinklinisPlius.Controllers
 
 
         
-        private List<Team> GetAvailableTeams()
-        {
-            // Simulated mock data source: Fetch all teams that are not part of active tournaments
-            var allTeams = GetMockTeams(); // You'd replace this with DB in real app
-            var tournaments = GetMockTournaments();
+       
 
-            var activeTeamIds = tournaments
-                .Where(t => t.Teams != null)
-                .SelectMany(t => t.Teams.Select(team => team.IdTeam))
-                .ToHashSet();
-
-
-            //return allTeams.Where(t => !activeTeamIds.Contains(t.IdTeam)).ToList();
-            return allTeams;
-        }
-
-        private List<Team> GetMockTeams()
-        {
-            return new List<TinklinisPlius.Models.Team>
-            {
-                new Team
-                {
-                    IdTeam = 1,
-                    Name = "Vilnius Spikers",
-                    Country = "Lithuania",
-                    Trainer = "Jonas Petrauskas",
-                    Elo = 1500,
-                    Isparticipating = false,
-                    FkTeammanageridUser = 101,
-                    FkTournamentidTournament = null
-                },
-                new Team
-                {
-                    IdTeam = 2,
-                    Name = "Riga Rockets",
-                    Country = "Latvia",
-                    Trainer = "Elina Ozola",
-                    Elo = 1600,
-                    Isparticipating = false,
-                    FkTeammanageridUser = 102,
-                    FkTournamentidTournament = null
-                },
-                new Team
-                {
-                    IdTeam = 3,
-                    Name = "Tallinn Titans",
-                    Country = "Estonia",
-                    Trainer = "Markus Kask",
-                    Elo = 1550,
-                    Isparticipating = false,
-                    FkTeammanageridUser = 103,
-                    FkTournamentidTournament = null
-                },
-                new Team
-                {
-                    IdTeam = 4,
-                    Name = "Kaunas Killers",
-                    Country = "Lithuania",
-                    Trainer = "Greta Kazlauskiene",
-                    Elo = 1520,
-                    Isparticipating = false,
-                    FkTeammanageridUser = 104,
-                    FkTournamentidTournament = null
-                },
-                new Team
-                {
-                    IdTeam = 5,
-                    Name = "Šiauliai Shockwave",
-                    Country = "Lithuania",
-                    Trainer = "Tadas Rimkus",
-                    Elo = 1480,
-                    Isparticipating = false,
-                    FkTeammanageridUser = 105,
-                    FkTournamentidTournament = null
-                }
-            };
-        }
+        
 
         [HttpGet]
         public ActionResult CreateTournamentWindow()
         {
-            ViewBag.AvailableTeams = GetAvailableTeams();
+            var teams = _teamService.GetAvailableTeams();
+            ViewBag.AvailableTeams = teams.Value;
             return View(new Tournament());
         }
 
         
         [HttpPost]
-        public ActionResult CreateTournamentWindow(Tournament tournament)
+        public ActionResult CreateTournamentWindow(Tournament tournament, int[] SelectedTeamIds)
         {
-            tournament.Isactive = true;
-
+            if (SelectedTeamIds.Length != tournament.Teamnr)
+            {
+                ModelState.AddModelError("", $"You must select exactly {tournament.Teamnr} teams.");
+                var teams = _teamService.GetAvailableTeams();
+                ViewBag.AvailableTeams = teams.Value;
+                return View(tournament);
+            }
+            // Load teams by selected IDs
+            var selectedTeams = _teamService.GetTeamsByIds(SelectedTeamIds);
+    
+            // Set tournament navigation for each team and mark participating
+            foreach (var team in selectedTeams)
+            {
+                team.FkTournamentidTournament = tournament.IdTournament;
+                team.Isparticipating = true;
+            }
+            
             if (!ModelState.IsValid)
             {
+                // Reload teams for redisplay
+                var teams = _teamService.GetAvailableTeams();
+                ViewBag.AvailableTeams = teams.Value;
+                return View(tournament);
+            }
+            
+            tournament.Isactive = true;
+
+            
+    
+            // Add teams to tournament (assuming ICollection<Team>)
+            /*
+            tournament.Players.Clear(); // or clear existing if needed
+            foreach (var team in selectedTeams)
+            {
+                tournament.Players.Add(team);
+            }*/
+
+            var result = _tournamentService.CreateTournament(tournament);
+            if (result.IsError)
+            {
+                ModelState.AddModelError("", "Error saving tournament.");
+                var teams = _teamService.GetAvailableTeams();
+                ViewBag.AvailableTeams = teams.Value;
                 return View(tournament);
             }
 
-            // Here you would normally save to a database.
-            // For now, just redirect to the list.
-            // You could also add it to a static list if simulating.
-
-            // Example placeholder:
-            Console.WriteLine($"New tournament created: {tournament.Title}");
-
             return RedirectToAction("TournamentListWindow");
         }
+
 
 
 

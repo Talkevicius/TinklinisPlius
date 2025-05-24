@@ -1,0 +1,27 @@
+﻿@model IEnumerable<TinklinisPlius.Models.Team>
+
+<h2>Teams</h2>
+
+<a href="@Url.Action("AddTeamWindow", "Team")" class="btn btn-primary">Create New Team</a>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Country</th>
+        <th>Trainer</th>
+        <th>Elo</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var team in Model)
+    {
+        <tr>
+            <td>@team.Name</td>
+            <td>@team.Country</td>
+            <td>@team.Trainer</td>
+            <td>@team.Elo</td>
+        </tr>
+    }
+    </tbody>
+</table>
