@@ -69,5 +69,10 @@ namespace TinklinisPlius.Services.Team
             return _context.Teams.Where(t => ids.Contains(t.IdTeam)).ToList();
         }
 
+        public bool TeamExistsByName(string name)
+        {
+            return _context.Teams.Any(t => t.Name.ToLower() == name.Trim().ToLower());
+        }
+
     }
 }
