@@ -14,6 +14,7 @@ public class BettingController : Controller
         _configuration = configuration;
     }
 
+    /// asdf
     public IActionResult WagerListWindow()
     {
         var wagers = new List<Wager>();
