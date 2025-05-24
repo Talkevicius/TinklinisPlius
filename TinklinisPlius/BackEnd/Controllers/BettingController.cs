@@ -14,7 +14,7 @@ public class BettingController : Controller
         _configuration = configuration;
     }
 
-    /// asdf
+    /// Wagers (Admin)
     public IActionResult WagerListWindow()
     {
         var wagers = new List<Wager>();
@@ -44,4 +44,35 @@ public class BettingController : Controller
 
         return View(wagers);
     }
+
+    /// Wager history (Admin)
+    public IActionResult WagerHistoryWindow()
+{
+    var finishedWagers = new List<Wager>();
+    string connString = _configuration.GetConnectionString("DefaultConnection");
+
+    using (var conn = new NpgsqlConnection(connString))
+    {
+        conn.Open();
+
+        using (var cmd = new NpgsqlCommand("SELECT * FROM Wager WHERE hasFinished = TRUE", conn))
+        using (var reader = cmd.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                finishedWagers.Add(new Wager
+                {
+                    IdWager = reader.GetInt32(reader.GetOrdinal("id_Wager")),
+                    Chance = reader.IsDBNull(reader.GetOrdinal("chance")) ? null : reader.GetInt32(reader.GetOrdinal("chance")),
+                    Combinedsum = reader.IsDBNull(reader.GetOrdinal("combinedSum")) ? null : reader.GetInt32(reader.GetOrdinal("combinedSum")),
+                    Hasfinished = reader.IsDBNull(reader.GetOrdinal("hasFinished")) ? null : reader.GetBoolean(reader.GetOrdinal("hasFinished")),
+                    FkMatchidMatch = reader.GetInt32(reader.GetOrdinal("fk_Matchid_Match")),
+                    FkMatchfkTournamentidTournament = reader.GetInt32(reader.GetOrdinal("fk_Matchfk_Tournamentid_Tournament"))
+                });
+            }
+        }
+    }
+
+    return View("WagerHistoryWindow", finishedWagers);
+}
 }
