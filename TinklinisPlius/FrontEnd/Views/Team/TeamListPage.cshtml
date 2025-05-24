@@ -25,7 +25,12 @@
         @foreach (var team in Model)
         {
             <tr>
-                <td>@team.Name</td>
+                <td>
+                    <a href="@Url.Action("PlayersByTeam", "Team", new { id = team.IdTeam })">
+                        @team.Name
+                    </a>
+                </td>
+
                 <td>@team.Country</td>
                 <td>@team.Trainer</td>
                 <td>

@@ -1,0 +1,16 @@
+﻿@model TinklinisPlius.Models.Player
+
+<h2>Player Details: @Model.Name @Model.Surname</h2>
+
+<ul>
+    <li><strong>Birthdate:</strong> @Model.Birthdate</li>
+    <li><strong>Position:</strong> @Model.Position</li>
+    <li><strong>ELO:</strong> @Model.Elo</li>
+    <li><strong>Points:</strong> @Model.Points</li>
+    <li><strong>Blocks:</strong> @Model.Blocks</li>
+    <li><strong>Aces:</strong> @Model.Ace</li>
+    <li><strong>Mistakes:</strong> @Model.Mistakes</li>
+    <li><strong>Team:</strong> @Model.FkTeamidTeamNavigation?.Name</li>
+</ul>
+
+<a href="@Url.Action("PlayersByTeam", "Team", new { id = Model.FkTeamidTeam })" class="btn btn-secondary mt-3">Back to Team</a>

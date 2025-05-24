@@ -1,0 +1,38 @@
+﻿@model TinklinisPlius.Models.Team
+
+<h2>Info about team @Model.Name</h2>
+
+<p><strong>Trainer:</strong> @Model.Trainer</p>
+<p><strong>Country:</strong> @Model.Country</p>
+
+@if (Model.Players != null && Model.Players.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in Model.Players)
+            {
+                <tr>
+                    <td>
+                        <a href="@Url.Action("PlayerDetails", "Player", new { id = player.IdPlayer })">
+                            @player.Name
+                        </a>
+                    </td>
+
+                    <td>@player.Surname</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>This team has no players.</p>
+}
+
+<a href="@Url.Action("TeamListPage", "Team")" class="btn btn-secondary mt-3">Back to Teams</a>

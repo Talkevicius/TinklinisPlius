@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
 using TinklinisPlius.Models;
 using TinklinisPlius.Services.Team;
 
@@ -146,6 +147,21 @@ namespace TinklinisPlius.Controllers
 
             var teams = teamsResult.Value;
             return View(teams);
+        }
+
+        [HttpGet]
+        public IActionResult PlayersByTeam(int id)
+        {
+            var team = _context.Teams
+                .Include(t => t.Players)
+                .FirstOrDefault(t => t.IdTeam == id);
+
+            if (team == null)
+            {
+                return NotFound();
+            }
+
+            return View(team);
         }
 
 
