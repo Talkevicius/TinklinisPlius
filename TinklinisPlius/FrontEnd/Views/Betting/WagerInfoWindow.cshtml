@@ -1,0 +1,49 @@
+@model List<TinklinisPlius.Models.Wager>
+
+@{
+    ViewData["Title"] = "Ongoing Wagers";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        No finished wagers found.
+    </div>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th>Wager number</th>
+            <th>Chance of team 1 winning</th>
+            <th>Total pot</th>
+            <th>Match number</th>
+            <th>Tournament number</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var wager in Model)
+        {
+            <tr>
+                <td>@wager.IdWager</td>
+                <td>@wager.Chance</td>
+                <td>@wager.Combinedsum</td>
+                <td>@wager.FkMatchidMatch</td>
+                <td>@wager.FkMatchfkTournamentidTournament</td>
+                <td>
+                    <a class="btn btn-success btn-sm" href="#">Place a bet</a>
+                    <button class="btn btn-danger btn-sm" onclick="alert('Bet removal feature not implemented');">Remove a bet</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<div class="mt-4">
+    <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Return Home</a>
+</div>
