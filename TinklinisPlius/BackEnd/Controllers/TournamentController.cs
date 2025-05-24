@@ -305,7 +305,8 @@ namespace TinklinisPlius.Controllers
                 team.FkTournamentidTournament = tournament.IdTournament;
                 team.Isparticipating = true;
             }
-            
+
+            tournament.Teams = selectedTeams;
             if (!ModelState.IsValid)
             {
                 // Reload teams for redisplay
@@ -314,17 +315,8 @@ namespace TinklinisPlius.Controllers
                 return View(tournament);
             }
             
-            tournament.Isactive = true;
-
             
-    
-            // Add teams to tournament (assuming ICollection<Team>)
-            /*
-            tournament.Players.Clear(); // or clear existing if needed
-            foreach (var team in selectedTeams)
-            {
-                tournament.Players.Add(team);
-            }*/
+            
 
             var result = _tournamentService.CreateTournament(tournament);
             if (result.IsError)
@@ -338,7 +330,65 @@ namespace TinklinisPlius.Controllers
             return RedirectToAction("TournamentListWindow");
         }
 
+        public ActionResult CreateTournament(Tournament tournament)
+        {
+            tournament.Isactive = true;
+            List<Team> teamsToPlay = tournament.Teams.ToList();
+            // Calculate coefficients in controller
+            var teamsWithCoeff = teamsToPlay.Select(team => new 
+            {
+                Team = team,
+                Coefficient = CalculateCoefficientForTeam(team,tournament.Country) // Your logic here
+            }).ToList();
 
+            // Sort teams by coefficient or randomly based on your business rules
+            if (tournament.Creationtype == true)
+            {
+                teamsWithCoeff = SortTeamsByCoefficient(teamsWithCoeff, tc => tc.Coefficient);
+
+                // Update tournament.Teams order
+                tournament.Teams = teamsWithCoeff.Select(tc => tc.Team).ToList();
+            }
+            else
+            {
+                // Randomize the teamsToPlay list directly
+                teamsToPlay = SortTeamsByRandom(teamsToPlay);
+                tournament.Teams = teamsToPlay;
+            }
+
+            // Update the tournament teams order based on sorting
+            tournament.Teams = teamsToPlay;
+
+            // Now call service to save tournament and handle match creation, assignments etc.
+            var createdTournament = _tournamentService.CreateTournament(tournament);
+
+            
+            
+            return View("TournamentInfoWindow", tournament);
+        }
+
+        public int CalculateCoefficientForTeam(Team team, string country)
+        {
+            int c = 0;
+            c += team.Elo.Value;
+            if (team.Country == country)
+            {
+                c += 1;
+            }
+            return c;
+        }
+
+        public List<T> SortTeamsByCoefficient<T>(List<T> teamsWithCoeff, Func<T, int> getCoeff)
+        {
+            return teamsWithCoeff.OrderByDescending(getCoeff).ToList();
+        }
+
+        
+        public List<Team> SortTeamsByRandom(List<Team> teams)
+        {
+            Random rnd = new Random();
+            return teams.OrderBy(t => rnd.Next()).ToList();
+        }
 
 
     }

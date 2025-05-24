@@ -48,9 +48,6 @@ namespace TinklinisPlius.Services.Tournament
         }
 
 
-
-        
-
         
     }
 }
