@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using TinklinisPlius.Models;
 using Npgsql;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 public class BettingController : Controller
 {
@@ -112,4 +113,77 @@ public class BettingController : Controller
 
     return View("WagerInfoWindow", ongoingWagers);
 }
+    [HttpGet]
+    public IActionResult CreateWagerWindow()
+    {
+        var model = new WagerCreationViewModel();
+        string connString = _configuration.GetConnectionString("DefaultConnection");
+
+        using (var conn = new NpgsqlConnection(connString))
+        {
+            conn.Open();
+            string sql = @"
+                SELECT m.id_Match, m.fk_Tournamentid_Tournament, m.date 
+                FROM Match m
+                WHERE m.date > CURRENT_DATE 
+                AND NOT EXISTS (
+                    SELECT 1 FROM Wager w WHERE w.fk_Matchid_Match = m.id_Match
+                )";
+
+            using (var cmd = new NpgsqlCommand(sql, conn))
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    var matchId = reader.GetInt32(0);
+                    var date = reader.GetDateTime(2).ToString("yyyy-MM-dd");
+
+                    model.MatchOptions.Add(new SelectListItem
+                    {
+                        Value = matchId.ToString(),
+                        Text = $"Match {matchId} on {date}"
+                    });
+                }
+            }
+        }
+
+        return View(model);
+    }
+
+    [HttpPost]
+    public IActionResult CreateWagerWindow(WagerCreationViewModel model)
+    {
+        if (model.SelectedMatchId == 0)
+        {
+            ModelState.AddModelError("", "Please select a match.");
+            return View(model);
+        }
+
+        string connString = _configuration.GetConnectionString("DefaultConnection");
+
+        using (var conn = new NpgsqlConnection(connString))
+        {
+            conn.Open();
+
+            int tournamentId = 0;
+
+            // Get the tournament ID for the selected match
+            using (var cmd = new NpgsqlCommand("SELECT fk_Tournamentid_Tournament FROM Match WHERE id_Match = @matchId", conn))
+            {
+                cmd.Parameters.AddWithValue("@matchId", model.SelectedMatchId);
+                tournamentId = (int)cmd.ExecuteScalar();
+            }
+
+            // Insert the new wager
+            using (var cmd = new NpgsqlCommand(@"INSERT INTO Wager (chance, combinedSum, hasFinished, fk_Matchid_Match, fk_Matchfk_Tournamentid_Tournament) 
+                                                VALUES (0, 0, false, @matchId, @tournamentId)", conn))
+            {
+                cmd.Parameters.AddWithValue("@matchId", model.SelectedMatchId);
+                cmd.Parameters.AddWithValue("@tournamentId", tournamentId);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        return RedirectToAction("WagerListWindow");
+    }
 }

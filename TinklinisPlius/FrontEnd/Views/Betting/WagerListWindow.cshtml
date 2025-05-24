@@ -6,6 +6,10 @@
 
 <h2>All Wagers (Admin)</h2>
 
+<div class="mb-3">
+    <a href="@Url.Action("CreateWagerWindow", "Betting")" class="btn btn-success">Create a Wager</a>
+</div>
+
 @if (Model == null || !Model.Any())
 {
     <div class="alert alert-info">

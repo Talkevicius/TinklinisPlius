@@ -1,0 +1,19 @@
+@model TinklinisPlius.Models.WagerCreationViewModel
+
+<h2>Create a New Wager</h2>
+
+<form asp-action="CreateWagerWindow" method="post">
+    <div class="form-group">
+        <label for="MatchId">Select Upcoming Match</label>
+        <select asp-for="SelectedMatchId" class="form-control" asp-items="Model.MatchOptions">
+            <option value="">-- Select a match --</option>
+        </select>
+    </div>
+
+    <br />
+    <button type="submit" class="btn btn-primary">Create Wager</button>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
