@@ -32,7 +32,13 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Player ELO</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Wagers</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Betting" asp-action="WagerListWindow">Wagers (Admin)</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Wager history (Admin)</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Ongoing wagers (User)</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" onclick="event.stopPropagation(); alert('Register function is not implemented.');">Register</a>
