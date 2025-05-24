@@ -7,12 +7,12 @@ using TinklinisPlius.Services.Team;
 
 namespace TinklinisPlius.Controllers
 {
-    public class TeamController: Controller
+    public class TeamController : Controller
     {
         private readonly ITeamService _teamService;
         private readonly AppDbContext _context; // Assuming the use of a DbContext for database operations.
 
-        public TeamController(ITeamService teamService,AppDbContext context)
+        public TeamController(ITeamService teamService, AppDbContext context)
         {
             _teamService = teamService;
             _context = context;
@@ -93,6 +93,7 @@ namespace TinklinisPlius.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
         public IActionResult EditTeam(Team team)
         {
             // Patikrina ar visi reikšmingi laukai tušti (ignoruoja tarpus)
@@ -132,6 +133,19 @@ namespace TinklinisPlius.Controllers
             }
 
             return View(team);
+        }
+
+        [HttpGet]
+        public IActionResult TeamElo()
+        {
+            var teamsResult = _teamService.GetAllTeams();
+            if (teamsResult.IsError)
+            {
+                return View("Error");
+            }
+
+            var teams = teamsResult.Value;
+            return View(teams);
         }
 
 

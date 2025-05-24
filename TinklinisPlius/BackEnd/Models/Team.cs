@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations;
 namespace TinklinisPlius.Models;
 
 public partial class Team
 {
     public int IdTeam { get; set; }
 
+    [Required(ErrorMessage = "Name is required")]
     public string? Name { get; set; }
 
+    [Required(ErrorMessage = "Country is required")]
     public string? Country { get; set; }
 
+    [Required(ErrorMessage = "Trainer is required")]
     public string? Trainer { get; set; }
 
     public int? Elo { get; set; }

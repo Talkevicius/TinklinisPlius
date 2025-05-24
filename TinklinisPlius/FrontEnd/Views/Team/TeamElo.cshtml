@@ -1,0 +1,23 @@
+﻿@model IEnumerable<TinklinisPlius.Models.Team>
+
+<h2>Team ELO Rankings</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Team Name</th>
+            <th>ELO</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var team in Model)
+        {
+            <tr>
+                <td>@team.Name</td>
+                <td>@team.Elo</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back to Team List</a>

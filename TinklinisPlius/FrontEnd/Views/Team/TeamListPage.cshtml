@@ -18,7 +18,6 @@
             <th>Name</th>
             <th>Country</th>
             <th>Trainer</th>
-            <th>Elo</th>
             <th>Actions</th> <!-- Nauja stulpelio antraštė -->
         </tr>
     </thead>
@@ -29,7 +28,6 @@
                 <td>@team.Name</td>
                 <td>@team.Country</td>
                 <td>@team.Trainer</td>
-                <td>@team.Elo</td>
                 <td>
                     <form asp-action="DeleteTeam" method="post" onsubmit="return confirmDelete(this);">
                         <input type="hidden" name="id" value="@team.IdTeam" />
