@@ -2,11 +2,61 @@
 
 @{
     ViewData["Title"] = "Match Details";
+    var teams = Model.Participates.Select(p => p.Team).ToList();
+    var team1 = teams.ElementAtOrDefault(0);
+    var team2 = teams.ElementAtOrDefault(1);
+    bool isMatchOver = Model.Hashappened == true;
+    bool canEnterScore = teams.Count >= 2 && !isMatchOver;
 }
 
 <h2>@Model.Title</h2>
-
 <p><strong>Date:</strong> @Model.Date</p>
-<p><strong>Score:</strong> @Model.Team1score - @Model.Team2score</p>
-<p><strong>Has Happened:</strong> @Model.Hashappened</p>
-<p><strong>Place in Tournament:</strong> @Model.Placeintournament</p>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="validation-summary-errors" style="color:red;">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+@if (isMatchOver)
+{
+    <p><strong>Final Score:</strong> @Model.Team1score - @Model.Team2score</p>
+    <p><em>This match has already happened. Scores cannot be edited.</em></p>
+}
+else if (teams.Count < 2)
+{
+    <p><em>Match is not ready for score entry (only one team present).</em></p>
+}
+else
+{
+    <form asp-action="SubmitResults" method="post">
+        <input type="hidden" name="matchId" value="@Model.IdMatch" />
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="width: 45%; text-align: center;">
+                <h3>@team1?.Name</h3>
+                <div>
+                    <input type="number" id="team1Score" name="team1Score" value="@Model.Team1score ?? 0" 
+                           style="font-size:1.5em; width: 60px; text-align:center;" min="0" />
+                </div>
+            </div>
+
+            <div style="width: 45%; text-align: center;">
+                <h3>@team2?.Name</h3>
+                <div>
+                    <input type="number" id="team2Score" name="team2Score" value="@Model.Team2score ?? 0" 
+                           style="font-size:1.5em; width: 60px; text-align:center;" min="0" />
+                </div>
+            </div>
+        </div>
+
+        <br />
+        <button type="submit">Submit Results</button>
+    </form>
+}

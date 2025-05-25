@@ -16,7 +16,7 @@ namespace TinklinisPlius.Controllers
         private readonly IMatchService _matchService;
         private readonly ITeamService _teamService;
         private readonly IParticipateService _participateService;
-        private readonly AppDbContext _context; // Assuming the use of a DbContext for database operations.
+        private readonly AppDbContext _context; 
 
         public TournamentController(ITournamentService tournamentService, IMatchService matchService,ITeamService teamService,IParticipateService participateService, AppDbContext context)
         {
@@ -34,12 +34,11 @@ namespace TinklinisPlius.Controllers
             var tournaments = _tournamentService.GetAllTournaments();
             if (tournaments.IsError)
             {
-                // Handle error (e.g., show an error page or message)
+                
                 return View("Error");
             }
 
-            // Pass the filtered products to the Index view
-            //return View("TournamentListWindow.cshtml", result.Value);
+            
             return View(tournaments.Value);
 
         }
@@ -55,7 +54,7 @@ namespace TinklinisPlius.Controllers
             }
 
             // Fetch related matches for the tournament (if needed)
-            tournament.Matches = _matchService.GetMatchesByTournamentId(id); // Or whatever method you have for this
+            tournament.Matches = _matchService.GetMatchesByTournamentId(id); 
             return View(tournament);
         }
 
@@ -81,6 +80,15 @@ namespace TinklinisPlius.Controllers
                 ViewBag.AvailableTeams = teams.Value;
                 return View(tournament);
             }
+            
+            if (!ModelState.IsValid)
+            {
+                // Reload teams for redisplay
+                var teams = _teamService.GetAvailableTeams();
+                ViewBag.AvailableTeams = teams.Value;
+                return View(tournament);
+            }
+            
             // Load teams by selected IDs
             var selectedTeams = _teamService.GetTeamsByIds(SelectedTeamIds);
     
@@ -92,13 +100,6 @@ namespace TinklinisPlius.Controllers
             }
 
             tournament.Teams = selectedTeams;
-            if (!ModelState.IsValid)
-            {
-                // Reload teams for redisplay
-                var teams = _teamService.GetAvailableTeams();
-                ViewBag.AvailableTeams = teams.Value;
-                return View(tournament);
-            }
             
             return CreateTournament(tournament);
         }
@@ -108,16 +109,15 @@ namespace TinklinisPlius.Controllers
         {
             tournament.Isactive = true;
             List<Team> teamsToPlay = tournament.Teams.ToList();
-            // Calculate coefficients in controller
-            var teamsWithCoeff = teamsToPlay.Select(team => new 
-            {
-                Team = team,
-                Coefficient = CalculateCoefficientForTeam(team,tournament.Country) // Your logic here
-            }).ToList();
 
-            // Sort teams by coefficient or randomly based on your business rules
+            // Sort teams by coefficient 
             if (tournament.Creationtype == true)
             {
+                var teamsWithCoeff = teamsToPlay.Select(team => new 
+                {
+                    Team = team,
+                    Coefficient = CalculateCoefficientForTeam(team,tournament.Country) //// Calculate coefficients in controller
+                }).ToList();
                 teamsWithCoeff = SortTeamsByCoefficient(teamsWithCoeff, tc => tc.Coefficient);
 
                 // Update tournament.Teams order
@@ -135,9 +135,7 @@ namespace TinklinisPlius.Controllers
             tournament.Teams = teamsToPlay;
 
             teamsToPlay = tournament.Teams.ToList();
-            // Now call service to save tournament and handle match creation, assignments etc.
             var createdTournament = _tournamentService.CreateTournament(tournament);
-            Console.WriteLine("➡️ tournament created"); 
             int newTournamentId = createdTournament.Value;
             int count = 0;
             int tournamentPlace = 0;
@@ -158,11 +156,8 @@ namespace TinklinisPlius.Controllers
                     Placeintournament = tournamentPlace,
                     
                 };
-
                 
                     _matchService.CreateMatch(match);
-                    Console.WriteLine("➡️ match created"); 
-                
 
                 var participate1 = new Participate
                 {
@@ -178,24 +173,18 @@ namespace TinklinisPlius.Controllers
                     FkTeamidTeam = team2.IdTeam
                 };
 
-                _participateService.CreateParticipate(participate1);
-                _participateService.CreateParticipate(participate2);
-
-                Console.WriteLine("➡️ participates created"); 
+                _participateService.CreateParticipate(new List<Participate> { participate1, participate2 });
                 // Remove the two teams from the list
                 teamsToPlay.RemoveAt(0);
                 teamsToPlay.RemoveAt(0);
                 count++;
                 tournamentPlace++;
-                Console.WriteLine("➡️ incremented"); 
             }
 
+            List<Match> allMatches = _matchService.GetMatchesByTournamentId(newTournamentId).ToList();
             int totalMatches = tournament.Teamnr.Value - 1;
-            List<Match> allMatches = _matchService.GetMatchesByTournamentId(newTournamentId).ToList(); // Previously created matches
-            List<Match> templateMatches = new List<Match>();
-
-// Start creating template matches from index = count (where real matches ended)
-            for (int i = count + 1; i <= totalMatches; i++)
+            // Start creating template matches from index = count
+            for (int i = count; i < totalMatches; i++)
             {
                 int p = i;
 
@@ -211,29 +200,29 @@ namespace TinklinisPlius.Controllers
                 };
 
                 _matchService.CreateMatch(match); // Sets match.IdMatch
-                templateMatches.Add(match);
             }
-
-            // Now link each template match to its previous matches using formulas
-            for (int i = 0; i < templateMatches.Count; i++)
+            
+            for (int p = count; p < totalMatches; p++)
             {
-                int p = i + count + 1;
-                var match = templateMatches[i];
+                Match parentMatch = allMatches[p];
 
-                int leftIndex = 2 * p - (totalMatches + 1);
-                int rightIndex = 2 * p - totalMatches;
+                // Calculate left and right child indices
+                int leftChildIndex = 2 * p - (totalMatches + 1);
+                int rightChildIndex = 2 * p - totalMatches;
 
-                if (leftIndex >= 1 && leftIndex <= allMatches.Count)
+                // Assign parent's ID to left child match
+                if (leftChildIndex >= 0 && leftChildIndex < allMatches.Count)
                 {
-                    match.FkMatchidMatch = allMatches[leftIndex - 1].IdMatch;
+                    allMatches[leftChildIndex].FkMatchidMatch = parentMatch.IdMatch;
+                    _matchService.UpdateMatch(allMatches[leftChildIndex]);
                 }
 
-                if (rightIndex >= 1 && rightIndex <= allMatches.Count)
+                // Assign parent's ID to right child match
+                if (rightChildIndex >= 0 && rightChildIndex < allMatches.Count)
                 {
-                    match.FkMatchfkTournamentidTournament = allMatches[rightIndex - 1].FkTournamentidTournament;
+                    allMatches[rightChildIndex].FkMatchidMatch = parentMatch.IdMatch;
+                    _matchService.UpdateMatch(allMatches[rightChildIndex]);
                 }
-
-                _matchService.UpdateMatch(match); // Make sure you have this method
             }
 
 

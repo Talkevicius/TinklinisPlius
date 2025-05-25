@@ -112,7 +112,7 @@ html, body {
     <p><strong>Location:</strong> @Model.Country</p>
     <p><strong>Team Nr:</strong> @Model.Teamnr</p>
     <p><strong>Created: </strong>@(Model.Creationtype.HasValue ? (Model.Creationtype.Value ? "Random" : "Coefficient") : "N/A")</p>
-    <p><strong>Tournament: </strong>@(Model.Isactive.HasValue ? (Model.Isactive.Value ? "Ended" : "Ongoing") : "N/A")</p>
+    <p><strong>Tournament: </strong>@(Model.Isactive.HasValue ? (Model.Isactive.Value ? "Active" : "Ended") : "N/A")</p>
 
 </div>
 

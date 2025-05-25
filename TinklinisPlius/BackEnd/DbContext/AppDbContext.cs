@@ -108,7 +108,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.FkInspectoridUser).HasColumnName("fk_inspectorid_user");
             entity.Property(e => e.FkMatchfkTournamentidTournament).HasColumnName("fk_matchfk_tournamentid_tournament");
             entity.Property(e => e.FkMatchidMatch).HasColumnName("fk_matchid_match");
-            entity.Property(e => e.FkTeamidTeam).HasColumnName("fk_teamid_team").isRequired(false);
+            entity.Property(e => e.FkTeamidTeam).HasColumnName("fk_teamid_team").IsRequired(false);
             entity.Property(e => e.Hashappened).HasColumnName("hashappened");
             entity.Property(e => e.Placeintournament).HasColumnName("placeintournament");
             entity.Property(e => e.Team1score).HasColumnName("team1score");
@@ -146,6 +146,14 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => new { d.FkMatchidMatch, d.FkMatchfkTournamentidTournament })
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_participates_match");
+            // Add relationship with Team
+            entity.HasOne(d => d.Team)
+                .WithMany()  // If Team does NOT have ICollection<Participate> navigation, otherwise replace with .WithMany(t => t.Participates)
+                .HasForeignKey(d => d.FkTeamidTeam)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_participates_team");
+            
+
         });
 
         modelBuilder.Entity<Payouttransaction>(entity =>
@@ -313,7 +321,7 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("wager");
 
-            entity.HasIndex(e => new { e.FkMatchidMatch, e.FkMatchfkTournamentidTournament }, "uq_wager_match").IsUnique();
+            //entity.HasIndex(e => new { e.FkMatchidMatch, e.FkMatchfkTournamentidTournament }, "uq_wager_match").IsUnique();
 
             entity.Property(e => e.IdWager).HasColumnName("id_wager");
             entity.Property(e => e.Chance).HasColumnName("chance");

@@ -47,7 +47,17 @@ namespace TinklinisPlius.Services.Tournament
             return _context.Tournaments.FirstOrDefault(t => t.IdTournament == id);
         }
 
+        public void EndTournament(Models.Tournament tour)
+        {
+            if (tour == null)
+                throw new ArgumentNullException(nameof(tour));
 
-        
+            tour.Isactive = false;
+            _context.Tournaments.Update(tour);  // Optional: only needed if not tracked
+            _context.SaveChanges();
+        }
+
+
+
     }
 }

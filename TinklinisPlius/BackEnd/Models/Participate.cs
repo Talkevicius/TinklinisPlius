@@ -12,4 +12,5 @@ public partial class Participate
     public int FkTeamidTeam { get; set; }
 
     public virtual Match Match { get; set; } = null!;
+    public virtual Team Team { get; set; } = null!;
 }

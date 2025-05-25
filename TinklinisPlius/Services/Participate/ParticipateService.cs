@@ -13,17 +13,42 @@ namespace TinklinisPlius.Services.Participate
             _context = context;
         }
 
-        public void CreateParticipate(Models.Participate p)
+        public void CreateParticipate(List<Models.Participate> participates)
         {
-            if (p == null) throw new ArgumentNullException(nameof(p));
-    
-            _context.Participates.Add(p);
+            if (participates == null || !participates.Any())
+                throw new ArgumentNullException(nameof(participates));
+
+            _context.Participates.AddRange(participates);
             _context.SaveChanges();
-    
-            
         }
 
 
+        public ErrorOr<List<Models.Participate>> GetParticipatesByMatchId(int matchId)
+        {
+            try
+            {
+                var participates = _context.Participates
+                    .Where(p => p.FkMatchidMatch == matchId)
+                    .Include(p => p.Team)                  // Include related Team
+                    .ThenInclude(t => t.Players)       // Include Team's Players
+                    .ToList();
+
+                return participates;
+            }
+            catch (Exception ex)
+            {
+                return Error.Unexpected(description: $"Failed to fetch participates: {ex.Message}");
+            }
+        }
+
+        public void IndicateWinnerTeam(Models.Participate participate)
+        {
+            if (participate == null)
+                throw new ArgumentNullException(nameof(participate));
+
+            _context.Participates.Add(participate);
+            _context.SaveChanges();
+        }
 
         
     }

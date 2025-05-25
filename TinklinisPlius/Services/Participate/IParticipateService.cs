@@ -4,6 +4,8 @@ namespace TinklinisPlius.Services.Participate
 {
     public interface IParticipateService
     {
-        public void CreateParticipate(Models.Participate participate);
+        public void CreateParticipate(List<Models.Participate> participates);
+        public void IndicateWinnerTeam(Models.Participate participate);
+        ErrorOr<List<Models.Participate>> GetParticipatesByMatchId(int matchId);
     }
 }

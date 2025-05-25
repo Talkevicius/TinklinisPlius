@@ -7,5 +7,7 @@ namespace TinklinisPlius.Services.Tournament
         ErrorOr<int> CreateTournament(Models.Tournament tournament);
         ErrorOr<List<Models.Tournament>> GetAllTournaments();
         public Models.Tournament GetTournamentById(int id);
+        public void EndTournament(Models.Tournament tour);
+
     }
 }
