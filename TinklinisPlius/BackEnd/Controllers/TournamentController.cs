@@ -181,7 +181,7 @@ namespace TinklinisPlius.Controllers
                 tournamentPlace++;
             }
 
-            List<Match> allMatches = _matchService.GetMatchesByTournamentId(newTournamentId).ToList();
+            
             int totalMatches = tournament.Teamnr.Value - 1;
             // Start creating template matches from index = count
             for (int i = count; i < totalMatches; i++)
@@ -201,9 +201,11 @@ namespace TinklinisPlius.Controllers
 
                 _matchService.CreateMatch(match); // Sets match.IdMatch
             }
-            
+            List<Match> allMatches = _matchService.GetMatchesByTournamentId(newTournamentId).ToList();
             for (int p = count; p < totalMatches; p++)
             {
+                Console.WriteLine($"p = {p}, allMatches.Count = {allMatches.Count}");
+
                 Match parentMatch = allMatches[p];
 
                 // Calculate left and right child indices
@@ -225,7 +227,7 @@ namespace TinklinisPlius.Controllers
                 }
             }
 
-
+            TempData["Message"] = "Tournament successfully created";
             return View("TournamentInfoWindow", tournament);
         }
 
