@@ -268,12 +268,10 @@ public class BettingController : Controller
                 }
             }
 
-            // Loss rate
             int totalResolved = results.Count;
             int losses = results.Count(r => r == false);
             lossRate = totalResolved > 0 ? (float)losses / totalResolved * 100f : 0f;
 
-            // Bet variance
             if (betAmounts.Count > 0)
             {
                 float mean = (float)betAmounts.Average();
@@ -281,7 +279,6 @@ public class BettingController : Controller
                 betVariance = variance % 10;
             }
 
-            // High odds frequency
             if (odds.Count > 0)
             {
                 int highRiskBets = odds.Count(o => o < 30 || o > 70);
@@ -327,10 +324,40 @@ public class BettingController : Controller
         var model = new PlaceBetViewModel
         {
             WagerId = wagerId,
-            UserId = 1
+            UserId = 1,
+            Teams = new List<SelectListItem>()
         };
+
+        using (var conn = new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+        {
+            conn.Open();
+
+            using (var cmd = new NpgsqlCommand(@"
+                SELECT t.id_Team, t.name
+                FROM Wager w
+                JOIN Match m ON w.fk_Matchid_Match = m.id_Match AND w.fk_Matchfk_Tournamentid_Tournament = m.fk_Tournamentid_Tournament
+                JOIN participates p ON p.fk_Matchid_Match = m.id_Match AND p.fk_Matchfk_Tournamentid_Tournament = m.fk_Tournamentid_Tournament
+                JOIN Team t ON t.id_Team = p.fk_Teamid_Team
+                WHERE w.id_Wager = @wagerId", conn))
+            {
+                cmd.Parameters.AddWithValue("@wagerId", wagerId);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        model.Teams.Add(new SelectListItem
+                        {
+                            Value = reader.GetInt32(0).ToString(),
+                            Text = reader.GetString(1)
+                        });
+                    }
+                }
+            }
+        }
+
         return View(model);
     }
+
 
     /*
     dotnet add package Stripe.net
