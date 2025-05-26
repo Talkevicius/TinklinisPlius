@@ -227,7 +227,7 @@ namespace TinklinisPlius.Controllers
                 }
             }
 
-
+            TempData["Message"] = "Tournament successfully created";
             return View("TournamentInfoWindow", tournament);
         }
 

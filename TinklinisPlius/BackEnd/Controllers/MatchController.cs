@@ -82,12 +82,14 @@ namespace TinklinisPlius.Controllers
             var team2 = participateList[1].Team;
 
             match.FkTeamidTeam = team1Score > team2Score ? team1.IdTeam : team2.IdTeam;
+            match.Title = $"{team1.Name} vs {team2.Name}";
 
             _matchService.UpdateMatch(match);
 
             var tour = _tournamentService.GetTournamentById(match.FkTournamentidTournament);
 
-            if (match.Placeintournament == tour.Teamnr - 1)
+            Console.WriteLine($"teamnr = {tour.Teamnr}, match place in tournament = {match.Placeintournament}");
+            if (match.Placeintournament == tour.Teamnr - 2) //nes placeInTournament skaciuojasi nuo 0, o ne nuo 1
             {
                 _tournamentService.EndTournament(tour);
             }

@@ -13,8 +13,8 @@
 /dataSources.local.xml
 
 # .NET build artifacts
-TinklinisPlius/bin/
-TinklinisPlius/obj/
+TinklinisPlius/bin
+TinklinisPlius/obj
 **/bin/
 **/obj/ 
 
