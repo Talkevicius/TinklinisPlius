@@ -6,6 +6,19 @@
 
 <h2>@ViewData["Title"]</h2>
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+else if (TempData["WarningMessage"] != null)
+{
+    <div class="alert alert-warning">@TempData["WarningMessage"]</div>
+}
+else if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
 @if (Model == null || !Model.Any())
 {
     <div class="alert alert-info">
@@ -16,26 +29,26 @@ else
 {
     <table class="table table-bordered">
         <thead class="thead-dark">
-        <tr>
-            <th>Wager number</th>
-            <th>Chance of team 1 winning</th>
-            <th>Total pot</th>
-            <th>Match number</th>
-            <th>Tournament number</th>
-            <th>Actions</th>
-        </tr>
+            <tr>
+                <th>Wager number</th>
+                <th>Chance of team 1 winning</th>
+                <th>Total pot</th>
+                <th>Match number</th>
+                <th>Tournament number</th>
+                <th>Actions</th>
+            </tr>
         </thead>
         <tbody>
         @foreach (var wager in Model)
         {
             <tr>
                 <td>@wager.IdWager</td>
-                <td>@wager.Chance</td>
+                <td>@wager.Chance%</td>
                 <td>@wager.Combinedsum</td>
                 <td>@wager.FkMatchidMatch</td>
                 <td>@wager.FkMatchfkTournamentidTournament</td>
                 <td>
-                    <a class="btn btn-success btn-sm" href="#">Place a bet</a>
+                    <a class="btn btn-success btn-sm" href="@Url.Action("CheckRiskBeforeBet", "Betting", new { wagerId = wager.IdWager })">Place a bet</a>
                     <button class="btn btn-danger btn-sm" onclick="alert('Bet removal feature not implemented');">Remove a bet</button>
                 </td>
             </tr>

@@ -27,6 +27,7 @@ else
             <th>Wager finished</th>
             <th>Match number</th>
             <th>Tournament number</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -39,6 +40,10 @@ else
                 <td>@(wager.Hasfinished == true ? "Yes" : "No")</td>
                 <td>@wager.FkMatchidMatch</td>
                 <td>@wager.FkMatchfkTournamentidTournament</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" disabled>Edit</button>
+                    <button class="btn btn-sm btn-danger" disabled>Delete</button>
+                </td>
             </tr>
         }
         </tbody>

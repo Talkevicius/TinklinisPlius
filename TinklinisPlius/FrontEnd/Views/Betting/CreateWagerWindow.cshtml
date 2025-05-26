@@ -2,6 +2,13 @@
 
 <h2>Create a New Wager</h2>
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
 <form asp-action="CreateWagerWindow" method="post">
     <div class="form-group">
         <label for="MatchId">Select Upcoming Match</label>
