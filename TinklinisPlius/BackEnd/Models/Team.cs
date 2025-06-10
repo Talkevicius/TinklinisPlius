@@ -31,4 +31,6 @@ public partial class Team
     public virtual Match? Match { get; set; }
 
     public virtual ICollection<Player> Players { get; set; } = new List<Player>();
+
+    
 }

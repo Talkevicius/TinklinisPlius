@@ -20,7 +20,7 @@ namespace TinklinisPlius.Services.Team
             return teams;
         }
 
-        public ErrorOr<Created> CreateTeam(Models.Team team)
+        public ErrorOr<Created> AddTeam(Models.Team team)
         {
             try
             {
@@ -42,8 +42,6 @@ namespace TinklinisPlius.Services.Team
                     code: "Team.UnknownError",
                     description: "An unknown error occurred while creating the team.");
             }
-
-
         }
 
         public ErrorOr<List<Models.Team>> GetAvailableTeams()
@@ -64,9 +62,15 @@ namespace TinklinisPlius.Services.Team
                     description: "Could not retrieve available teams.");
             }
         }
+
         public List<Models.Team> GetTeamsByIds(int[] ids)
         {
             return _context.Teams.Where(t => ids.Contains(t.IdTeam)).ToList();
+        }
+
+        public void Save()
+        {
+            _context.SaveChanges();
         }
 
         public bool TeamExistsByName(string name)
@@ -74,5 +78,12 @@ namespace TinklinisPlius.Services.Team
             return _context.Teams.Any(t => t.Name.ToLower() == name.Trim().ToLower());
         }
 
+        public ErrorOr<Updated> SetEloTo1(Models.Team team, int elo)
+        {
+            team.Elo = 1;
+            _context.SaveChanges();
+            return Result.Updated;
+        }
+        
     }
 }

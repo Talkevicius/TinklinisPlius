@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Mono.TextTemplating;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
+using System.Security.AccessControl;
 using TinklinisPlius.Models;
 using TinklinisPlius.Services.Team;
 
@@ -37,27 +41,82 @@ namespace TinklinisPlius.Controllers
         }
 
 
-        [HttpPost]
+
         [HttpPost]
         public ActionResult AddTeamWindow(Team team)
         {
-            if (_teamService.TeamExistsByName(team.Name))
+            // 1. Check if team already exists using GetAllTeams
+            var allTeamsResult = _teamService.GetAllTeams();
+
+            // First check if the operation was successful
+            if (allTeamsResult.IsError)
+            {
+                ModelState.AddModelError("", "Failed to retrieve teams list. Please try again.");
+                return View(team);
+            }
+
+            // Now check if team exists (case-insensitive comparison)
+            if (allTeamsResult.Value.Any(t => t.Name.Equals(team.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 ModelState.AddModelError("Name", "Team already exists");
                 return View(team);
             }
-
+            // 2. Validacija
             if (ModelState.IsValid)
             {
-                team.Elo = 1;
+                // 3. Nustatome numatytąsias reikšmes
                 team.Isparticipating = false;
 
-                _teamService.CreateTeam(team);
+                // 4. Pridedame komandą (jei AddTeam sėkmingas, team turės ID)
+                var addResult = _teamService.AddTeam(team);
+
+                // 5. Jei įrašymas nepavyko, grąžiname klaidą
+                if (addResult.IsError)
+                {
+                    ModelState.AddModelError("", "Failed to add team. Please try again.");
+                    return View(team);
+                }
+
+                // 6. Nustatome Elo reitingą tiesiogiai per `team` (nes jis jau turės ID)
+                _teamService.SetEloTo1(team, 1);
+
+                // 7. Išsaugome pakeitimus (jei ORM nėra automatinio)
+                _teamService.Save();
+
+                // 8. Po sėkmingo pridėjimo nukreipiame į sąrašą
                 return RedirectToAction("TeamListPage");
             }
 
+            // Jei validacija nepraeina, grąžiname formą su klaidomis
             return View(team);
         }
+
+           
+
+        /*[HttpPost]
+        public ActionResult AddTeamWindow(Team team)
+        {
+            // 1. AddTeamWindow() - inicijuojamas procesas (jau įvyksta per [HttpPost] kvietimą)
+
+            // 2. Tikriname ar komanda jau egzistuoja (atitinka žingsnį 8)
+            if (_teamService.TeamExistsByName(team.Name))
+            {
+                // 8. error - grąžiname validacijos klaidą
+                ModelState.AddModelError("Name", "Team already exists");
+                return View(team);
+            }
+
+            // 4. team() - dirbame su komandos objektu
+            // 5. Eksplicitiai iškviečiame addTeam() operaciją
+            _teamService.AddTeam(team);  // Vietoj CreateTeam
+
+            // 10. setEloTo(1) - aiškiai išskirtas Elo nustatymas
+            _teamService.SetEloTo(team, 1);
+
+            // 11-12. success - nukreipiame į sąrašo puslapį
+            return RedirectToAction("TeamListPage");
+        }
+        */
 
         [HttpPost]
         public IActionResult DeleteTeam(int id, string confirm)
