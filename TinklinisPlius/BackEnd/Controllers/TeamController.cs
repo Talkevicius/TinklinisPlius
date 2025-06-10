@@ -45,49 +45,38 @@ namespace TinklinisPlius.Controllers
         [HttpPost]
         public ActionResult AddTeamWindow(Team team)
         {
-            // 1. Check if team already exists using GetAllTeams
             var allTeamsResult = _teamService.GetAllTeams();
 
-            // First check if the operation was successful
             if (allTeamsResult.IsError)
             {
                 ModelState.AddModelError("", "Failed to retrieve teams list. Please try again.");
                 return View(team);
             }
 
-            // Now check if team exists (case-insensitive comparison)
             if (allTeamsResult.Value.Any(t => t.Name.Equals(team.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 ModelState.AddModelError("Name", "Team already exists");
                 return View(team);
             }
-            // 2. Validacija
             if (ModelState.IsValid)
             {
-                // 3. Nustatome numatytąsias reikšmes
                 team.Isparticipating = false;
 
-                // 4. Pridedame komandą (jei AddTeam sėkmingas, team turės ID)
                 var addResult = _teamService.AddTeam(team);
 
-                // 5. Jei įrašymas nepavyko, grąžiname klaidą
                 if (addResult.IsError)
                 {
                     ModelState.AddModelError("", "Failed to add team. Please try again.");
                     return View(team);
                 }
 
-                // 6. Nustatome Elo reitingą tiesiogiai per `team` (nes jis jau turės ID)
                 _teamService.SetEloTo1(team, 1);
 
-                // 7. Išsaugome pakeitimus (jei ORM nėra automatinio)
                 _teamService.Save();
 
-                // 8. Po sėkmingo pridėjimo nukreipiame į sąrašą
                 return RedirectToAction("TeamListPage");
             }
 
-            // Jei validacija nepraeina, grąžiname formą su klaidomis
             return View(team);
         }
 
@@ -151,9 +140,51 @@ namespace TinklinisPlius.Controllers
 
             return View(team);
         }
+        [HttpPost]
+        public IActionResult EditTeam(Team team)
+        {
+            var validationResult = _teamService.ValidateData(team);
+            if (validationResult.IsError)
+            {
+                TempData["Message"] = validationResult.FirstError.Description;
+                return RedirectToAction("TeamListPage");
+            }
 
-        [HttpPost]
-        [HttpPost]
+            var getTeamResult = _teamService.GetTeam(team.IdTeam);
+            if (getTeamResult.IsError)
+            {
+                return NotFound();
+            }
+            var existingTeam = getTeamResult.Value;
+
+            var selectTeamResult = _teamService.SelectTeam(team.Name, team.IdTeam);
+            if (selectTeamResult.IsError)
+            {
+                // Jei reikia, gali čia kažką daryti su klaida, bet dažniausiai tiesiog tęs...
+            }
+            else if (selectTeamResult.Value)
+            {
+                ModelState.AddModelError("Name", "Team with this name already exists.");
+                return View(team);
+            }
+
+            if (ModelState.IsValid)
+            {
+                existingTeam.Name = team.Name;
+                existingTeam.Trainer = team.Trainer;
+                existingTeam.Country = team.Country;
+
+                _teamService.Save();
+
+                TempData["Message"] = "Team updated successfully.";
+                return RedirectToAction("TeamListPage");
+            }
+
+            return View(team);
+        }
+
+
+        /*[HttpPost]
         public IActionResult EditTeam(Team team)
         {
             // Patikrina ar visi reikšmingi laukai tušti (ignoruoja tarpus)
@@ -194,7 +225,7 @@ namespace TinklinisPlius.Controllers
 
             return View(team);
         }
-
+        */
         [HttpGet]
         public IActionResult TeamElo()
         {

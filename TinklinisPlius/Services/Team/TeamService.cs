@@ -84,6 +84,45 @@ namespace TinklinisPlius.Services.Team
             _context.SaveChanges();
             return Result.Updated;
         }
-        
+        public ErrorOr<bool> ValidateData(Models.Team team)
+        {
+            bool allEmpty = string.IsNullOrWhiteSpace(team.Name)
+                            && string.IsNullOrWhiteSpace(team.Trainer)
+                            && string.IsNullOrWhiteSpace(team.Country);
+
+            if (allEmpty)
+            {
+                return Error.Validation(
+                    code: "Team.Validation.NoData",
+                    description: "No data entered. Changes were canceled.");
+            }
+
+            return true;
+        }
+
+        public ErrorOr<bool> SelectTeam(string name, int currentId)
+        {
+            bool exists = _context.Teams
+                .Any(t => t.Name.ToLower() == name.Trim().ToLower() && t.IdTeam != currentId);
+
+            return exists;
+        }
+
+        public ErrorOr<Models.Team> GetTeam(int id)
+        {
+            var team = _context.Teams.FirstOrDefault(t => t.IdTeam == id);
+
+            if (team == null)
+            {
+                return Error.NotFound(
+                    code: "Team.NotFound",
+                    description: $"Team with ID {id} not found.");
+            }
+
+            return team;
+        }
+
+
+
     }
 }

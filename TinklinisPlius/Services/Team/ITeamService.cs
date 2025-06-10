@@ -16,8 +16,10 @@ namespace TinklinisPlius.Services.Team
         ErrorOr<Updated> SetEloTo1(Models.Team team, int elo);
         // 🔽 PRIDĖTA:
         bool TeamExistsByName(string name);
-        
-       
+        ErrorOr<bool> ValidateData(Models.Team team);
+        ErrorOr<bool> SelectTeam(string name, int currentId);
+        ErrorOr<Models.Team> GetTeam(int id);
+
 
     }
 
